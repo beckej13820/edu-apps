@@ -1,0 +1,74 @@
+{
+    "rules": [
+        {
+            "name": "App Footer Structure",
+            "description": "All apps must include a standardized footer with license, source code, and embed information",
+            "pattern": "<footer class=\"app-footer\">",
+            "severity": "error",
+            "message": "App must include a standardized footer with app-footer class"
+        },
+        {
+            "name": "Footer Content Structure",
+            "description": "Footer must contain acknowledgement and embed button sections",
+            "pattern": "<div class=\"footer-content\">[\\s\\S]*?<div class=\"acknowledgement\">[\\s\\S]*?<button id=\"embedBtn\"",
+            "severity": "error",
+            "message": "Footer must contain acknowledgement section and embed button"
+        },
+        {
+            "name": "Creative Commons License",
+            "description": "Footer must include Creative Commons license link",
+            "pattern": "creativecommons\\.org/licenses/by/4\\.0",
+            "severity": "error",
+            "message": "Footer must include link to Creative Commons Attribution 4.0 license"
+        },
+        {
+            "name": "Source Code Link",
+            "description": "Footer must include link to source code repository",
+            "pattern": "github\\.com/[^/]+/[^/\"]+",
+            "severity": "error",
+            "message": "Footer must include link to GitHub repository"
+        },
+        {
+            "name": "Embed Button",
+            "description": "Footer must include embed button with proper styling",
+            "pattern": "<button id=\"embedBtn\" class=\"btn btn-secondary\">[\\s\\S]*?<i class=\"fas fa-code\"></i> Embed</button>",
+            "severity": "error",
+            "message": "Footer must include embed button with code icon"
+        },
+        {
+            "name": "Footer CSS Classes",
+            "description": "Footer must use standardized CSS classes",
+            "pattern": "\\.app-footer|\\.footer-content|\\.acknowledgement",
+            "severity": "error",
+            "message": "Footer must use standardized CSS classes (app-footer, footer-content, acknowledgement)"
+        },
+        {
+            "name": "Footer Responsive Design",
+            "description": "Footer must include responsive design rules",
+            "pattern": "@media.*?footer-content.*?flex-direction: column",
+            "severity": "warning",
+            "message": "Footer should include responsive design rules for mobile devices"
+        },
+        {
+            "name": "Footer Security Attributes",
+            "description": "External links in footer must include security attributes",
+            "pattern": "target=\"_blank\" rel=\"noopener noreferrer\"",
+            "severity": "error",
+            "message": "External links must include target=\"_blank\" and rel=\"noopener noreferrer\""
+        },
+        {
+            "name": "Footer Icons",
+            "description": "Footer must include appropriate icons for license and source code",
+            "pattern": "fa-(creative-commons|github)",
+            "severity": "warning",
+            "message": "Footer should include appropriate Font Awesome icons"
+        },
+        {
+            "name": "Footer Styling",
+            "description": "Footer must include proper styling for links and spacing",
+            "pattern": "\\.acknowledgement a|\\.acknowledgement p|\\.app-footer",
+            "severity": "warning",
+            "message": "Footer should include proper styling for links and text"
+        }
+    ]
+} 
