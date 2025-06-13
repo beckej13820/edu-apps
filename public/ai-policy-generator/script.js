@@ -149,7 +149,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (selectedOptions.length === 0) return '';
         
-        const isCourse = document.querySelector('input[name="policyScope"]:checked').value === 'course';
+        const policyScope = document.querySelector('input[name="policyScope"]:checked');
+        if (!policyScope) return '';
+        
+        const isCourse = policyScope.value === 'course';
         const context = isCourse ? 'in this course' : 'for this assignment';
         
         const header = `If you use AI ${context}, you must also:`;
@@ -167,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function updatePolicyPreview() {
         const formData = new FormData(form);
         const policySections = [];
-        let documentationAdded = false;
+        let documentationProcessed = false;
 
         // Process each question and its answer
         for (let [name, value] of formData.entries()) {
@@ -177,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const questionContainer = document.querySelector(`[data-question="${name}"]`);
             if (questionContainer && !questionContainer.classList.contains('hidden')) {
-                if (name === 'documentation' && !documentationAdded) {
+                if (name === 'documentation' && !documentationProcessed) {
                     const selectedOptions = Array.from(document.querySelectorAll('input[name="documentation"]:checked'));
                     if (selectedOptions.length > 0) {
                         const text = getDocumentationText();
@@ -187,9 +190,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                 icon: 'fas fa-tasks',
                                 isDocumentation: true
                             });
-                            documentationAdded = true;
                         }
                     }
+                    documentationProcessed = true;
                 } else if (name !== 'documentation') {
                     const selectedOption = questionContainer.querySelector(`input[name="${name}"]:checked`);
                     if (selectedOption) {
