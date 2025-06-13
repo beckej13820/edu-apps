@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://cdnjs.cloudflare.com; style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'; script-src 'self' 'unsafe-inline';">
+    <meta http-equiv="X-Frame-Options" content="ALLOW-FROM *">
     <title>AI Policy Statement Generator</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -193,7 +195,52 @@
                 </div>
             </div>
         </div>
+
+        <footer class="app-footer">
+            <div class="footer-content">
+                <div class="acknowledgement">
+                    <p>The AI Policy Generator was created by Ed Beck and Tera Doty-Blance and has been shared under a <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Creative Commons Attribution 4.0 International License <i class="fab fa-creative-commons"></i></a>.</p>
+                    <p>Source code is available on <a href="https://github.com/beckej13820/edu-apps" target="_blank" rel="noopener noreferrer">GitHub <i class="fab fa-github"></i></a></p>
+                </div>
+                <button id="embedBtn" class="btn btn-secondary">
+                    <i class="fas fa-code"></i> Embed
+                </button>
+            </div>
+        </footer>
     </main>
+
+    <!-- Embed Modal -->
+    <div id="embedModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Embed AI Policy Generator</h2>
+                <button class="close-modal" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Copy and paste this code to embed the AI Policy Generator on your website:</p>
+                <div class="code-container">
+                    <pre><code id="embedCode"></code></pre>
+                    <button id="copyEmbedBtn" class="btn">
+                        <i class="fas fa-copy"></i> Copy Code
+                    </button>
+                </div>
+                <div class="embed-preview">
+                    <h3>Preview:</h3>
+                    <div class="preview-frame">
+                        <iframe 
+                            src="index.html" 
+                            style="width: 100%; border: none; min-height: 400px;"
+                            title="AI Policy Generator Preview"
+                            allow="clipboard-write"
+                        ></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html> 
