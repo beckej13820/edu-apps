@@ -10,65 +10,66 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-    <main class="container" role="main">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <main id="main-content" class="container" role="main" tabindex="-1">
         <h1>AI Policy Statement Generator</h1>
         
         <div class="form-container">
             <!-- Left Column: Questions -->
-            <div class="questions-column">
-                <form id="policyForm" class="policy-form">
+            <div class="questions-column" role="region" aria-label="Policy Configuration">
+                <form id="policyForm" class="policy-form" aria-label="AI Policy Configuration Form">
                     <!-- Question 1: Policy Scope -->
-                    <div class="question-container" id="question1" data-question="policyScope">
-                        <h2>Is this AI Policy for your entire course or for a specific assignment?</h2>
-                        <div class="options-grid">
+                    <div class="question-container" id="question1" data-question="policyScope" role="group" aria-labelledby="scope-heading">
+                        <h2 id="scope-heading">Is this AI Policy for your entire course or for a specific assignment?</h2>
+                        <div class="options-grid" role="radiogroup" aria-labelledby="scope-heading">
                             <label class="option-card">
-                                <input type="radio" name="policyScope" value="course" required>
+                                <input type="radio" name="policyScope" value="course" required aria-describedby="course-desc">
                                 <div class="card-content">
                                     <i class="fas fa-book" aria-hidden="true"></i>
                                     <h3>Entire Course</h3>
-                                    <p>This policy will apply to all assignments and activities throughout the course.</p>
+                                    <p id="course-desc">This policy will apply to all assignments and activities throughout the course.</p>
                                 </div>
                             </label>
                             <label class="option-card">
-                                <input type="radio" name="policyScope" value="assignment">
+                                <input type="radio" name="policyScope" value="assignment" aria-describedby="assignment-desc">
                                 <div class="card-content">
                                     <i class="fas fa-tasks" aria-hidden="true"></i>
                                     <h3>Specific Assignment</h3>
-                                    <p>This policy will apply only to a specific assignment or activity.</p>
+                                    <p id="assignment-desc">This policy will apply only to a specific assignment or activity.</p>
                                 </div>
                             </label>
                         </div>
                     </div>
 
                     <!-- Question 2: AI Usage -->
-                    <div class="question-container" id="question2" data-question="aiUsage">
-                        <h2 class="course-text">How may students use AI tools in your course?</h2>
-                        <h2 class="assignment-text hidden">How may students use AI tools for this assignment?</h2>
-                        <div class="options-grid">
+                    <div class="question-container" id="question2" data-question="aiUsage" role="group" aria-labelledby="usage-heading">
+                        <h2 id="usage-heading" class="course-text">How may students use AI tools in your course?</h2>
+                        <h2 id="usage-heading-assignment" class="assignment-text hidden">How may students use AI tools for this assignment?</h2>
+                        <div class="options-grid" role="radiogroup" aria-labelledby="usage-heading">
                             <label class="option-card">
-                                <input type="radio" name="aiUsage" value="prohibited" required>
+                                <input type="radio" name="aiUsage" value="prohibited" required aria-describedby="prohibited-desc">
                                 <div class="card-content">
                                     <i class="fas fa-ban" aria-hidden="true"></i>
                                     <h3>Prohibited</h3>
-                                    <p class="course-text">You may not use AI tools for any assignments or activities in this course.</p>
+                                    <p id="prohibited-desc" class="course-text">You may not use AI tools for any assignments or activities in this course.</p>
                                     <p class="assignment-text hidden">You may not use AI tools for this assignment.</p>
                                 </div>
                             </label>
                             <label class="option-card">
-                                <input type="radio" name="aiUsage" value="limited">
+                                <input type="radio" name="aiUsage" value="limited" aria-describedby="limited-desc">
                                 <div class="card-content">
                                     <i class="fas fa-hand-paper" aria-hidden="true"></i>
                                     <h3>Limited Use</h3>
-                                    <p class="course-text">You may use AI tools only for assignments where I have given you specific permission.</p>
+                                    <p id="limited-desc" class="course-text">You may use AI tools only for assignments where I have given you specific permission.</p>
                                     <p class="assignment-text hidden">You may use AI tools only for parts of this assignment where I have given you specific permission.</p>
                                 </div>
                             </label>
                             <label class="option-card">
-                                <input type="radio" name="aiUsage" value="encouraged">
+                                <input type="radio" name="aiUsage" value="encouraged" aria-describedby="encouraged-desc">
                                 <div class="card-content">
                                     <i class="fas fa-lightbulb" aria-hidden="true"></i>
                                     <h3>Encouraged</h3>
-                                    <p class="course-text">You are encouraged to use AI tools as learning aids and to help with your work.</p>
+                                    <p id="encouraged-desc" class="course-text">You are encouraged to use AI tools as learning aids and to help with your work.</p>
                                     <p class="assignment-text hidden">You are encouraged to use AI tools as learning aids for this assignment.</p>
                                 </div>
                             </label>
@@ -76,25 +77,25 @@
                     </div>
 
                     <!-- Question 3: Citation Requirements -->
-                    <div class="question-container" id="question3" data-question="citation">
-                        <h2 class="course-text">What are the requirements for disclosing AI use in your course?</h2>
+                    <div class="question-container" id="question3" data-question="citation" role="group" aria-labelledby="citation-heading">
+                        <h2 id="citation-heading" class="course-text">What are the requirements for disclosing AI use in your course?</h2>
                         <h2 class="assignment-text hidden">What are the requirements for disclosing AI use for this assignment?</h2>
-                        <div class="options-grid">
+                        <div class="options-grid" role="radiogroup" aria-labelledby="citation-heading">
                             <label class="option-card">
-                                <input type="radio" name="citation" value="required" required>
+                                <input type="radio" name="citation" value="required" required aria-describedby="required-desc">
                                 <div class="card-content">
                                     <i class="fas fa-check-circle" aria-hidden="true"></i>
                                     <h3>AI Use Must Be Disclosed</h3>
-                                    <p class="course-text">You must acknowledge your use of AI tools in this course.</p>
+                                    <p id="required-desc" class="course-text">You must acknowledge your use of AI tools in this course.</p>
                                     <p class="assignment-text hidden">You must acknowledge your use of AI tools for this assignment.</p>
                                 </div>
                             </label>
                             <label class="option-card">
-                                <input type="radio" name="citation" value="none">
+                                <input type="radio" name="citation" value="none" aria-describedby="none-desc">
                                 <div class="card-content">
                                     <i class="fas fa-times-circle" aria-hidden="true"></i>
                                     <h3>No Disclosure Required</h3>
-                                    <p class="course-text">You are not required to acknowledge your use of AI tools.</p>
+                                    <p id="none-desc" class="course-text">You are not required to acknowledge your use of AI tools.</p>
                                     <p class="assignment-text hidden">You are not required to acknowledge your use of AI tools for this assignment.</p>
                                 </div>
                             </label>
@@ -102,77 +103,77 @@
                     </div>
 
                     <!-- Question 4: Documentation -->
-                    <div class="question-container" id="question4" data-question="documentation">
-                        <h2 class="course-text">What additional documentation or assignments are required for AI tool usage in your course?</h2>
+                    <div class="question-container" id="question4" data-question="documentation" role="group" aria-labelledby="documentation-heading">
+                        <h2 id="documentation-heading" class="course-text">What additional documentation or assignments are required for AI tool usage in your course?</h2>
                         <h2 class="assignment-text hidden">What additional documentation or assignments are required for AI tool usage in this assignment?</h2>
-                        <div class="options-grid documentation-options">
+                        <div class="options-grid documentation-options" role="group" aria-labelledby="documentation-heading">
                             <label class="option-card checkbox-card">
-                                <input type="checkbox" name="documentation" value="tools">
+                                <input type="checkbox" name="documentation" value="tools" aria-describedby="tools-desc">
                                 <div class="card-content">
                                     <i class="fas fa-tools" aria-hidden="true"></i>
                                     <h3>Document Platforms</h3>
-                                    <p class="course-text">You must document which AI platforms and tools you used.</p>
+                                    <p id="tools-desc" class="course-text">You must document which AI platforms and tools you used.</p>
                                     <p class="assignment-text hidden">You must document which AI platforms and tools you used for this assignment.</p>
                                 </div>
                             </label>
                             <label class="option-card checkbox-card">
-                                <input type="checkbox" name="documentation" value="prompts">
+                                <input type="checkbox" name="documentation" value="prompts" aria-describedby="prompts-desc">
                                 <div class="card-content">
                                     <i class="fas fa-file-export" aria-hidden="true"></i>
                                     <h3>Submit Prompts & Outputs</h3>
-                                    <p class="course-text">You must include your prompts and AI outputs with your assignment submission.</p>
+                                    <p id="prompts-desc" class="course-text">You must include your prompts and AI outputs with your assignment submission.</p>
                                     <p class="assignment-text hidden">You must include your prompts and AI outputs with this assignment submission.</p>
                                 </div>
                             </label>
                             <label class="option-card checkbox-card">
-                                <input type="checkbox" name="documentation" value="citation">
+                                <input type="checkbox" name="documentation" value="citation" aria-describedby="citation-desc">
                                 <div class="card-content">
                                     <i class="fas fa-file-signature" aria-hidden="true"></i>
                                     <h3>Formal Citation Required</h3>
-                                    <p class="course-text">You must provide formal citations for AI-generated content.</p>
+                                    <p id="citation-desc" class="course-text">You must provide formal citations for AI-generated content.</p>
                                     <p class="assignment-text hidden">You must provide formal citations for AI-generated content in this assignment.</p>
                                 </div>
                             </label>
                             <label class="option-card checkbox-card">
-                                <input type="checkbox" name="documentation" value="reflection">
+                                <input type="checkbox" name="documentation" value="reflection" aria-describedby="reflection-desc">
                                 <div class="card-content">
                                     <i class="fas fa-brain" aria-hidden="true"></i>
                                     <h3>Additional Reflection</h3>
-                                    <p class="course-text">You must include a reflection on your AI usage and learning process.</p>
+                                    <p id="reflection-desc" class="course-text">You must include a reflection on your AI usage and learning process.</p>
                                     <p class="assignment-text hidden">You must include a reflection on your AI usage and learning process for this assignment.</p>
                                 </div>
                             </label>
                             <label class="option-card checkbox-card">
-                                <input type="checkbox" name="documentation" value="factcheck">
+                                <input type="checkbox" name="documentation" value="factcheck" aria-describedby="factcheck-desc">
                                 <div class="card-content">
                                     <i class="fas fa-check-double" aria-hidden="true"></i>
                                     <h3>Fact Check</h3>
-                                    <p class="course-text">You must verify AI-generated information against trusted sources and document your fact-checking process.</p>
+                                    <p id="factcheck-desc" class="course-text">You must verify AI-generated information against trusted sources and document your fact-checking process.</p>
                                     <p class="assignment-text hidden">You must verify AI-generated information against trusted sources and document your fact-checking process for this assignment.</p>
                                 </div>
                             </label>
                             <label class="option-card checkbox-card">
-                                <input type="checkbox" name="documentation" value="multitools">
+                                <input type="checkbox" name="documentation" value="multitools" aria-describedby="multitools-desc">
                                 <div class="card-content">
                                     <i class="fas fa-code-compare" aria-hidden="true"></i>
                                     <h3>Compare Multiple Tools</h3>
-                                    <p class="course-text">You must compare results from multiple AI tools and analyze the differences.</p>
+                                    <p id="multitools-desc" class="course-text">You must compare results from multiple AI tools and analyze the differences.</p>
                                     <p class="assignment-text hidden">You must compare results from multiple AI tools and analyze the differences for this assignment.</p>
                                 </div>
                             </label>
                             <label class="option-card checkbox-card">
-                                <input type="checkbox" name="documentation" value="other">
+                                <input type="checkbox" name="documentation" value="other" aria-describedby="other-desc">
                                 <div class="card-content">
                                     <i class="fas fa-plus-circle" aria-hidden="true"></i>
                                     <h3>Other Requirements</h3>
-                                    <p class="course-text">Additional documentation or assignment requirements (specify below).</p>
+                                    <p id="other-desc" class="course-text">Additional documentation or assignment requirements (specify below).</p>
                                     <p class="assignment-text hidden">Additional documentation or assignment requirements (specify below).</p>
                                 </div>
                             </label>
-                            <div id="otherDocumentationContainer" class="other-documentation-container hidden">
+                            <div id="otherDocumentationContainer" class="other-documentation-container hidden" role="group" aria-labelledby="custom-doc-label">
                                 <div class="other-documentation-input">
-                                    <label for="customDocumentation">Specify additional requirements:</label>
-                                    <textarea id="customDocumentation" placeholder="Enter your additional documentation or assignment requirements" rows="3"></textarea>
+                                    <label id="custom-doc-label" for="customDocumentation">Specify additional requirements:</label>
+                                    <textarea id="customDocumentation" name="customDocumentation" placeholder="Enter your additional documentation or assignment requirements" rows="3" aria-labelledby="custom-doc-label"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -181,16 +182,16 @@
             </div>
 
             <!-- Right Column: Policy Preview -->
-            <div class="preview-column">
+            <div class="preview-column" role="region" aria-label="Policy Preview">
                 <div class="preview-container">
                     <h2>Policy Preview</h2>
-                    <div id="previewContainer" class="policy-statement">
+                    <div id="previewContainer" class="policy-statement" role="region" aria-live="polite">
                         <!-- Policy statement will be generated here -->
                     </div>
                     <div class="action-buttons">
-                        <button type="button" id="startOverBtn" class="btn btn-secondary">Start Over</button>
-                        <button type="button" id="downloadRTF" class="btn">Download RTF</button>
-                        <button type="button" id="copyBtn" class="btn">Copy HTML</button>
+                        <button type="button" id="startOverBtn" class="btn btn-secondary" aria-label="Start over and clear all selections">Start Over</button>
+                        <button type="button" id="downloadRTF" class="btn" aria-label="Download policy as RTF file">Download RTF</button>
+                        <button type="button" id="copyBtn" class="btn" aria-label="Copy policy HTML to clipboard">Copy HTML</button>
                     </div>
                 </div>
             </div>
@@ -199,31 +200,31 @@
         <footer class="app-footer">
             <div class="footer-content">
                 <div class="acknowledgement">
-                    <p>The AI Policy Generator was created by Ed Beck and Tera Doty-Blance and has been shared under a <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Creative Commons Attribution 4.0 International License <i class="fab fa-creative-commons"></i></a>.</p>
-                    <p>Source code is available on <a href="https://github.com/beckej13820/edu-apps" target="_blank" rel="noopener noreferrer">GitHub <i class="fab fa-github"></i></a></p>
+                    <p>The AI Policy Generator was created by Ed Beck and Tera Doty-Blance and has been shared under a <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Creative Commons Attribution 4.0 International License <i class="fab fa-creative-commons" aria-hidden="true"></i></a>.</p>
+                    <p>Source code is available on <a href="https://github.com/beckej13820/edu-apps" target="_blank" rel="noopener noreferrer">GitHub <i class="fab fa-github" aria-hidden="true"></i></a></p>
                 </div>
-                <button id="embedBtn" class="btn btn-secondary">
-                    <i class="fas fa-code"></i> Embed
+                <button id="embedBtn" class="btn btn-secondary" aria-label="Open embed code modal">
+                    <i class="fas fa-code" aria-hidden="true"></i> Embed
                 </button>
             </div>
         </footer>
     </main>
 
     <!-- Embed Modal -->
-    <div id="embedModal" class="modal hidden">
+    <div id="embedModal" class="modal hidden" role="dialog" aria-labelledby="modal-title" aria-modal="true">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Embed AI Policy Generator</h2>
+                <h2 id="modal-title">Embed AI Policy Generator</h2>
                 <button class="close-modal" aria-label="Close modal">
-                    <i class="fas fa-times"></i>
+                    <i class="fas fa-times" aria-hidden="true"></i>
                 </button>
             </div>
             <div class="modal-body">
                 <p>Copy and paste this code to embed the AI Policy Generator on your website:</p>
                 <div class="code-container">
                     <pre><code id="embedCode"></code></pre>
-                    <button id="copyEmbedBtn" class="btn">
-                        <i class="fas fa-copy"></i> Copy Code
+                    <button id="copyEmbedBtn" class="btn" aria-label="Copy embed code to clipboard">
+                        <i class="fas fa-copy" aria-hidden="true"></i> Copy Code
                     </button>
                 </div>
                 <div class="embed-preview">
@@ -234,6 +235,7 @@
                             style="width: 100%; border: none; min-height: 400px;"
                             title="AI Policy Generator Preview"
                             allow="clipboard-write"
+                            aria-label="Preview of the AI Policy Generator"
                         ></iframe>
                     </div>
                 </div>

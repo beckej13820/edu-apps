@@ -1,0 +1,57 @@
+{
+  "config": {
+    "rules": {
+      "html-has-lang": true,
+      "image-alt": true,
+      "object-alt": true,
+      "th-has-data-cells": true,
+      "aria-allowed-attr": true,
+      "aria-required-attr": true,
+      "aria-required-children": true,
+      "aria-required-parent": true,
+      "aria-roles": true,
+      "aria-valid-attr-value": true,
+      "aria-valid-attr": true,
+      "button-name": true,
+      "bypass": true,
+      "color-contrast": true,
+      "document-title": true,
+      "duplicate-id": true,
+      "form-field-multiple-labels": true,
+      "frame-title": true,
+      "heading-order": true,
+      "html-lang-valid": true,
+      "image-redundant-alt": true,
+      "input-button-name": true,
+      "label": true,
+      "link-name": true,
+      "list": true,
+      "listitem": true,
+      "meta-refresh": true,
+      "meta-viewport": true,
+      "object-alt": true,
+      "role-img-alt": true,
+      "scrollable-region-focusable": true,
+      "select-name": true,
+      "svg-img-alt": true,
+      "td-headers-attr": true,
+      "valid-lang": true
+    },
+    "exclude": [
+      "node_modules/**",
+      "dist/**",
+      "build/**",
+      "**/*.test.*",
+      "**/*.spec.*"
+    ],
+    "tags": [
+      "wcag2a",
+      "wcag2aa",
+      "wcag21a",
+      "wcag21aa",
+      "wcag22a",
+      "wcag22aa"
+    ],
+    "global-components": {}
+  }
+} 
