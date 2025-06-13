@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentQuestion = 0;
     const totalQuestions = questions.length;
+    let questionHistory = [0]; // Track question navigation history
 
     // Policy templates
     const policyTemplates = {
@@ -69,6 +70,17 @@ document.addEventListener('DOMContentLoaded', () => {
         updateProgress();
     }
 
+    // Handle AI usage selection
+    function handleAIUsageSelection() {
+        const aiUsage = document.querySelector('input[name="aiUsage"]:checked').value;
+        if (aiUsage === 'prohibited') {
+            // Skip to summary if AI is prohibited
+            currentQuestion = totalQuestions;
+            showQuestion(currentQuestion);
+            generatePolicy();
+        }
+    }
+
     // Navigation
     nextBtn.addEventListener('click', () => {
         if (currentQuestion < totalQuestions - 1) {
@@ -79,19 +91,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Please select an option before proceeding.');
                 return;
             }
+
+            // If this is the AI usage question, check the selection
+            if (currentQuestion === 0) {
+                handleAIUsageSelection();
+                return;
+            }
             
             currentQuestion++;
+            questionHistory.push(currentQuestion);
             showQuestion(currentQuestion);
         } else {
             generatePolicy();
             currentQuestion++;
+            questionHistory.push(currentQuestion);
             showQuestion(currentQuestion);
         }
     });
 
     prevBtn.addEventListener('click', () => {
         if (currentQuestion > 0) {
-            currentQuestion--;
+            questionHistory.pop(); // Remove current question
+            currentQuestion = questionHistory[questionHistory.length - 1]; // Get previous question
             showQuestion(currentQuestion);
         }
     });
@@ -99,16 +120,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // Generate policy statement
     function generatePolicy() {
         const aiUsage = document.querySelector('input[name="aiUsage"]:checked').value;
-        const citation = document.querySelector('input[name="citation"]:checked').value;
-        const documentation = document.querySelector('input[name="documentation"]:checked').value;
-
-        const policyHTML = `
+        let policyHTML = `
             <div class="policy-content">
                 <h3>AI Policy Statement</h3>
                 <div class="policy-section">
                     <i class="fas ${policyTemplates.aiUsage[aiUsage].icon}"></i>
                     <p>${policyTemplates.aiUsage[aiUsage].text}</p>
-                </div>
+                </div>`;
+
+        // Only include citation and documentation if AI is not prohibited
+        if (aiUsage !== 'prohibited') {
+            const citation = document.querySelector('input[name="citation"]:checked').value;
+            const documentation = document.querySelector('input[name="documentation"]:checked').value;
+
+            policyHTML += `
                 <div class="policy-section">
                     <i class="fas ${policyTemplates.citation[citation].icon}"></i>
                     <p>${policyTemplates.citation[citation].text}</p>
@@ -116,10 +141,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="policy-section">
                     <i class="fas ${policyTemplates.documentation[documentation].icon}"></i>
                     <p>${policyTemplates.documentation[documentation].text}</p>
-                </div>
-            </div>
-        `;
+                </div>`;
+        }
 
+        policyHTML += `</div>`;
         document.getElementById('policyStatement').innerHTML = policyHTML;
     }
 
