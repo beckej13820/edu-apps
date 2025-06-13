@@ -206,6 +206,7 @@ h2 {
 
 .policy-section p {
     margin: 0;
+    flex: 1;
 }
 
 /* Action Buttons */
@@ -297,4 +298,110 @@ h2 {
     .card-content {
         border: 2px solid #000000;
     }
+}
+
+/* Checkbox Card Styles */
+.checkbox-card input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+}
+
+.checkbox-card input[type="checkbox"]:checked + .card-content {
+    border-color: var(--primary-color);
+    background-color: #e6f0ff;
+}
+
+.checkbox-card:hover .card-content {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Other Documentation Container */
+.other-documentation-container {
+    margin: 1rem 0;
+    padding: 1rem;
+    background-color: var(--secondary-color);
+    border-radius: var(--border-radius);
+    border: 1px solid #ddd;
+}
+
+.other-documentation-input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.other-documentation-input label {
+    font-weight: 500;
+}
+
+.other-documentation-input textarea {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    width: 100%;
+    resize: vertical;
+    min-height: 100px;
+}
+
+.other-documentation-input textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+}
+
+/* Documentation Options Grid */
+.documentation-options {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+/* Documentation Section Styles */
+.documentation-section {
+    width: 100%;
+}
+
+.documentation-header {
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.documentation-requirements {
+    margin-left: 2rem;
+}
+
+.requirement-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.requirement-item i {
+    font-size: 1.25rem;
+    color: var(--primary-color);
+    margin-top: 0.25rem;
+}
+
+.requirement-item span {
+    flex: 1;
+}
+
+/* Policy Section Adjustments */
+.policy-section {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.policy-section i {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-top: 0.25rem;
+}
+
+.policy-section p {
+    margin: 0;
+    flex: 1;
 } 
