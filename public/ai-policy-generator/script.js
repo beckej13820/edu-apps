@@ -150,10 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (selectedOptions.length === 0) return '';
         
         const policyScope = document.querySelector('input[name="policyScope"]:checked');
-        if (!policyScope) return '';
-        
-        const isCourse = policyScope.value === 'course';
-        const context = isCourse ? 'in this course' : 'for this assignment';
+        const context = policyScope && policyScope.value === 'course' ? 'in this course' : 'for this assignment';
         
         const header = `If you use AI ${context}, you must also:`;
         const requirements = selectedOptions.map(item => 
