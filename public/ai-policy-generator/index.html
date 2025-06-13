@@ -5,138 +5,169 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Policy Statement Generator</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
     <main class="container" role="main">
         <h1>AI Policy Statement Generator</h1>
-        <div class="progress-container">
-            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-        </div>
+        
+        <div class="form-container">
+            <!-- Left Column: Questions -->
+            <div class="questions-column">
+                <form id="policyForm" class="policy-form">
+                    <!-- Question 1: Policy Scope -->
+                    <div class="question-container" id="question1" data-question="policyScope">
+                        <h2>Is this AI Policy for your entire course or for a specific assignment?</h2>
+                        <div class="options-grid">
+                            <label class="option-card">
+                                <input type="radio" name="policyScope" value="course" required>
+                                <div class="card-content">
+                                    <i class="fas fa-book" aria-hidden="true"></i>
+                                    <h3>Entire Course</h3>
+                                    <p>This policy will apply to all assignments and activities throughout the course.</p>
+                                </div>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="policyScope" value="assignment">
+                                <div class="card-content">
+                                    <i class="fas fa-tasks" aria-hidden="true"></i>
+                                    <h3>Specific Assignment</h3>
+                                    <p>This policy will apply only to a specific assignment or activity.</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
 
-        <form id="policyForm" class="policy-form">
-            <!-- Question 1: AI Usage -->
-            <div class="question-container" id="question1">
-                <h2>How may students use AI tools in your course?</h2>
-                <div class="options-grid">
-                    <label class="option-card">
-                        <input type="radio" name="aiUsage" value="prohibited" required>
-                        <div class="card-content">
-                            <i class="fas fa-ban" aria-hidden="true"></i>
-                            <h3>Prohibited</h3>
-                            <p>AI tools are not permitted for any course assignments or activities.</p>
+                    <!-- Question 2: AI Usage -->
+                    <div class="question-container" id="question2" data-question="aiUsage">
+                        <h2 class="course-text">How may students use AI tools in your course?</h2>
+                        <h2 class="assignment-text hidden">How may students use AI tools for this assignment?</h2>
+                        <div class="options-grid">
+                            <label class="option-card">
+                                <input type="radio" name="aiUsage" value="prohibited" required>
+                                <div class="card-content">
+                                    <i class="fas fa-ban" aria-hidden="true"></i>
+                                    <h3>Prohibited</h3>
+                                    <p class="course-text">The use of AI tools is not allowed for any assignments or activities in this course.</p>
+                                    <p class="assignment-text hidden">The use of AI tools is not allowed for this assignment.</p>
+                                </div>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="aiUsage" value="limited">
+                                <div class="card-content">
+                                    <i class="fas fa-hand-paper" aria-hidden="true"></i>
+                                    <h3>Limited Use</h3>
+                                    <p class="course-text">You may use AI tools only for assignments where I have given you specific permission.</p>
+                                    <p class="assignment-text hidden">You may use AI tools only for parts of this assignment where I have given you specific permission.</p>
+                                </div>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="aiUsage" value="encouraged">
+                                <div class="card-content">
+                                    <i class="fas fa-lightbulb" aria-hidden="true"></i>
+                                    <h3>Encouraged</h3>
+                                    <p class="course-text">You are encouraged to use AI tools as learning aids and to help with your work.</p>
+                                    <p class="assignment-text hidden">You are encouraged to use AI tools as learning aids for this assignment.</p>
+                                </div>
+                            </label>
                         </div>
-                    </label>
-                    <label class="option-card">
-                        <input type="radio" name="aiUsage" value="limited">
-                        <div class="card-content">
-                            <i class="fas fa-hand-paper" aria-hidden="true"></i>
-                            <h3>Limited Use</h3>
-                            <p>AI tools may be used for specific assignments with explicit permission.</p>
+                    </div>
+
+                    <!-- Question 3: Citation Requirements -->
+                    <div class="question-container" id="question3" data-question="citation">
+                        <h2 class="course-text">What are the requirements for disclosing AI use in your course?</h2>
+                        <h2 class="assignment-text hidden">What are the requirements for disclosing AI use for this assignment?</h2>
+                        <div class="options-grid">
+                            <label class="option-card">
+                                <input type="radio" name="citation" value="simple" required>
+                                <div class="card-content">
+                                    <i class="fas fa-check-circle" aria-hidden="true"></i>
+                                    <h3>Simple Acknowledgement</h3>
+                                    <p class="course-text">Students must include a simple statement acknowledging their use of AI tools.</p>
+                                    <p class="assignment-text hidden">Students must include a simple statement acknowledging their use of AI tools for this assignment.</p>
+                                </div>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="citation" value="formal">
+                                <div class="card-content">
+                                    <i class="fas fa-file-signature" aria-hidden="true"></i>
+                                    <h3>Formal Citation Required</h3>
+                                    <p class="course-text">Students must both acknowledge AI use and provide formal citations for AI-generated content.</p>
+                                    <p class="assignment-text hidden">Students must both acknowledge AI use and provide formal citations for AI-generated content in this assignment.</p>
+                                </div>
+                            </label>
+                            <!-- Citation Format Selector -->
+                            <div id="citationFormatContainer" class="citation-format-container hidden">
+                                <div class="citation-format-selector">
+                                    <select id="citationFormat" class="citation-select">
+                                        <option value="">Select a citation format...</option>
+                                        <option value="apa">APA (American Psychological Association)</option>
+                                        <option value="mla">MLA (Modern Language Association)</option>
+                                        <option value="chicago">Chicago Manual of Style</option>
+                                        <option value="turabian">Turabian</option>
+                                        <option value="other">Other (specify below)</option>
+                                    </select>
+                                    <div id="otherCitationFormat" class="other-citation-format hidden">
+                                        <label for="customCitationFormat">Specify citation format:</label>
+                                        <input type="text" id="customCitationFormat" placeholder="Enter your preferred citation format">
+                                    </div>
+                                </div>
+                            </div>
+                            <label class="option-card">
+                                <input type="radio" name="citation" value="none">
+                                <div class="card-content">
+                                    <i class="fas fa-times-circle" aria-hidden="true"></i>
+                                    <h3>No Disclosure Required</h3>
+                                    <p class="course-text">Students are not required to acknowledge or cite their use of AI tools.</p>
+                                    <p class="assignment-text hidden">Students are not required to acknowledge or cite their use of AI tools for this assignment.</p>
+                                </div>
+                            </label>
                         </div>
-                    </label>
-                    <label class="option-card">
-                        <input type="radio" name="aiUsage" value="encouraged">
-                        <div class="card-content">
-                            <i class="fas fa-lightbulb" aria-hidden="true"></i>
-                            <h3>Encouraged</h3>
-                            <p>AI tools are encouraged as learning aids and productivity tools.</p>
+                    </div>
+
+                    <!-- Question 4: Documentation -->
+                    <div class="question-container" id="question4" data-question="documentation">
+                        <h2 class="course-text">What documentation is required for AI tool usage in your course?</h2>
+                        <h2 class="assignment-text hidden">What documentation is required for AI tool usage in this assignment?</h2>
+                        <div class="options-grid">
+                            <label class="option-card">
+                                <input type="radio" name="documentation" value="detailed" required>
+                                <div class="card-content">
+                                    <i class="fas fa-file-alt" aria-hidden="true"></i>
+                                    <h3>Detailed Documentation</h3>
+                                    <p class="course-text">Students must document all AI tool usage, including prompts and outputs.</p>
+                                    <p class="assignment-text hidden">Students must document all AI tool usage for this assignment, including prompts and outputs.</p>
+                                </div>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="documentation" value="basic">
+                                <div class="card-content">
+                                    <i class="fas fa-clipboard-list" aria-hidden="true"></i>
+                                    <h3>Basic Documentation</h3>
+                                    <p class="course-text">Simple acknowledgment of AI tool usage is sufficient.</p>
+                                    <p class="assignment-text hidden">Simple acknowledgment of AI tool usage for this assignment is sufficient.</p>
+                                </div>
+                            </label>
                         </div>
-                    </label>
-                </div>
+                    </div>
+                </form>
             </div>
 
-            <!-- Question 2: Citation Requirements -->
-            <div class="question-container hidden" id="question2">
-                <h2>What are the requirements for disclosing AI use?</h2>
-                <div class="options-grid">
-                    <label class="option-card">
-                        <input type="radio" name="citation" value="simple" required>
-                        <div class="card-content">
-                            <i class="fas fa-check-circle" aria-hidden="true"></i>
-                            <h3>Simple Acknowledgement</h3>
-                            <p>Students must include a simple statement acknowledging their use of AI tools.</p>
-                        </div>
-                    </label>
-                    <label class="option-card">
-                        <input type="radio" name="citation" value="formal">
-                        <div class="card-content">
-                            <i class="fas fa-file-signature" aria-hidden="true"></i>
-                            <h3>Formal Citation Required</h3>
-                            <p>Students must both acknowledge AI use and provide formal citations for AI-generated content.</p>
-                        </div>
-                    </label>
-                    <label class="option-card">
-                        <input type="radio" name="citation" value="none">
-                        <div class="card-content">
-                            <i class="fas fa-times-circle" aria-hidden="true"></i>
-                            <h3>No Disclosure Required</h3>
-                            <p>Students are not required to acknowledge or cite their use of AI tools.</p>
-                        </div>
-                    </label>
-                </div>
-
-                <!-- Citation Format Selector -->
-                <div id="citationFormatContainer" class="citation-format-container hidden">
-                    <h3>Citation Format</h3>
-                    <div class="citation-format-selector">
-                        <select id="citationFormat" class="citation-select">
-                            <option value="">Select a citation format...</option>
-                            <option value="apa">APA (American Psychological Association)</option>
-                            <option value="mla">MLA (Modern Language Association)</option>
-                            <option value="chicago">Chicago Manual of Style</option>
-                            <option value="turabian">Turabian</option>
-                            <option value="other">Other (specify below)</option>
-                        </select>
-                        <div id="otherCitationFormat" class="other-citation-format hidden">
-                            <label for="customCitationFormat">Specify citation format:</label>
-                            <input type="text" id="customCitationFormat" placeholder="Enter your preferred citation format">
-                        </div>
+            <!-- Right Column: Policy Preview -->
+            <div class="preview-column">
+                <div class="preview-container">
+                    <h2>Policy Preview</h2>
+                    <div id="previewContainer" class="policy-statement">
+                        <!-- Policy statement will be generated here -->
+                    </div>
+                    <div class="action-buttons">
+                        <button type="button" id="startOverBtn" class="btn btn-secondary">Start Over</button>
+                        <button type="button" id="downloadRTF" class="btn">Download RTF</button>
+                        <button type="button" id="copyBtn" class="btn">Copy HTML</button>
                     </div>
                 </div>
             </div>
-
-            <!-- Question 3: Documentation -->
-            <div class="question-container hidden" id="question3">
-                <h2>What documentation is required for AI tool usage?</h2>
-                <div class="options-grid">
-                    <label class="option-card">
-                        <input type="radio" name="documentation" value="detailed" required>
-                        <div class="card-content">
-                            <i class="fas fa-file-alt" aria-hidden="true"></i>
-                            <h3>Detailed Documentation</h3>
-                            <p>Students must document all AI tool usage, including prompts and outputs.</p>
-                        </div>
-                    </label>
-                    <label class="option-card">
-                        <input type="radio" name="documentation" value="basic">
-                        <div class="card-content">
-                            <i class="fas fa-clipboard-list" aria-hidden="true"></i>
-                            <h3>Basic Documentation</h3>
-                            <p>Simple acknowledgment of AI tool usage is sufficient.</p>
-                        </div>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Summary Section -->
-            <div class="summary-container hidden" id="summary">
-                <h2>Your AI Policy Statement</h2>
-                <div class="policy-statement" id="policyStatement">
-                    <!-- Policy statement will be generated here -->
-                </div>
-                <div class="action-buttons">
-                    <button type="button" id="downloadRTF" class="btn">Download RTF</button>
-                    <button type="button" id="copyHTML" class="btn">Copy HTML</button>
-                </div>
-            </div>
-
-            <div class="navigation-buttons">
-                <button type="button" id="prevBtn" class="btn" disabled>Previous</button>
-                <button type="button" id="startOverBtn" class="btn btn-secondary">Start Over</button>
-                <button type="button" id="nextBtn" class="btn">Next</button>
-            </div>
-        </form>
+        </div>
     </main>
     <script src="script.js"></script>
 </body>
