@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Policy Statement Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <main class="container" role="main">
+        <h1>AI Policy Statement Generator</h1>
+        <div class="progress-container">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+
+        <form id="policyForm" class="policy-form">
+            <!-- Question 1: AI Usage -->
+            <div class="question-container" id="question1">
+                <h2>How may students use AI tools in your course?</h2>
+                <div class="options-grid">
+                    <label class="option-card">
+                        <input type="radio" name="aiUsage" value="prohibited" required>
+                        <div class="card-content">
+                            <i class="fas fa-ban" aria-hidden="true"></i>
+                            <h3>Prohibited</h3>
+                            <p>AI tools are not permitted for any course assignments or activities.</p>
+                        </div>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="aiUsage" value="limited">
+                        <div class="card-content">
+                            <i class="fas fa-hand-paper" aria-hidden="true"></i>
+                            <h3>Limited Use</h3>
+                            <p>AI tools may be used for specific assignments with explicit permission.</p>
+                        </div>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="aiUsage" value="encouraged">
+                        <div class="card-content">
+                            <i class="fas fa-lightbulb" aria-hidden="true"></i>
+                            <h3>Encouraged</h3>
+                            <p>AI tools are encouraged as learning aids and productivity tools.</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 2: Citation Requirements -->
+            <div class="question-container hidden" id="question2">
+                <h2>What are the citation requirements for AI-generated content?</h2>
+                <div class="options-grid">
+                    <label class="option-card">
+                        <input type="radio" name="citation" value="required" required>
+                        <div class="card-content">
+                            <i class="fas fa-quote-right" aria-hidden="true"></i>
+                            <h3>Required</h3>
+                            <p>All AI-generated content must be properly cited and documented.</p>
+                        </div>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="citation" value="optional">
+                        <div class="card-content">
+                            <i class="fas fa-info-circle" aria-hidden="true"></i>
+                            <h3>Optional</h3>
+                            <p>Citation is recommended but not mandatory for AI-generated content.</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 3: Documentation -->
+            <div class="question-container hidden" id="question3">
+                <h2>What documentation is required for AI tool usage?</h2>
+                <div class="options-grid">
+                    <label class="option-card">
+                        <input type="radio" name="documentation" value="detailed" required>
+                        <div class="card-content">
+                            <i class="fas fa-file-alt" aria-hidden="true"></i>
+                            <h3>Detailed Documentation</h3>
+                            <p>Students must document all AI tool usage, including prompts and outputs.</p>
+                        </div>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="documentation" value="basic">
+                        <div class="card-content">
+                            <i class="fas fa-clipboard-list" aria-hidden="true"></i>
+                            <h3>Basic Documentation</h3>
+                            <p>Simple acknowledgment of AI tool usage is sufficient.</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Summary Section -->
+            <div class="summary-container hidden" id="summary">
+                <h2>Your AI Policy Statement</h2>
+                <div class="policy-statement" id="policyStatement">
+                    <!-- Policy statement will be generated here -->
+                </div>
+                <div class="action-buttons">
+                    <button type="button" id="downloadRTF" class="btn">Download RTF</button>
+                    <button type="button" id="copyHTML" class="btn">Copy HTML</button>
+                </div>
+            </div>
+
+            <div class="navigation-buttons">
+                <button type="button" id="prevBtn" class="btn" disabled>Previous</button>
+                <button type="button" id="nextBtn" class="btn">Next</button>
+            </div>
+        </form>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html> 
