@@ -48,8 +48,8 @@
                                 <div class="card-content">
                                     <i class="fas fa-ban" aria-hidden="true"></i>
                                     <h3>Prohibited</h3>
-                                    <p class="course-text">The use of AI tools is not allowed for any assignments or activities in this course.</p>
-                                    <p class="assignment-text hidden">The use of AI tools is not allowed for this assignment.</p>
+                                    <p class="course-text">You may not use AI tools for any assignments or activities in this course.</p>
+                                    <p class="assignment-text hidden">You may not use AI tools for this assignment.</p>
                                 </div>
                             </label>
                             <label class="option-card">
@@ -79,47 +79,21 @@
                         <h2 class="assignment-text hidden">What are the requirements for disclosing AI use for this assignment?</h2>
                         <div class="options-grid">
                             <label class="option-card">
-                                <input type="radio" name="citation" value="simple" required>
+                                <input type="radio" name="citation" value="required" required>
                                 <div class="card-content">
                                     <i class="fas fa-check-circle" aria-hidden="true"></i>
-                                    <h3>Simple Acknowledgement</h3>
-                                    <p class="course-text">Students must include a simple statement acknowledging their use of AI tools.</p>
-                                    <p class="assignment-text hidden">Students must include a simple statement acknowledging their use of AI tools for this assignment.</p>
+                                    <h3>AI Use Must Be Disclosed</h3>
+                                    <p class="course-text">You must acknowledge your use of AI tools in this course.</p>
+                                    <p class="assignment-text hidden">You must acknowledge your use of AI tools for this assignment.</p>
                                 </div>
                             </label>
-                            <label class="option-card">
-                                <input type="radio" name="citation" value="formal">
-                                <div class="card-content">
-                                    <i class="fas fa-file-signature" aria-hidden="true"></i>
-                                    <h3>Formal Citation Required</h3>
-                                    <p class="course-text">Students must both acknowledge AI use and provide formal citations for AI-generated content.</p>
-                                    <p class="assignment-text hidden">Students must both acknowledge AI use and provide formal citations for AI-generated content in this assignment.</p>
-                                </div>
-                            </label>
-                            <!-- Citation Format Selector -->
-                            <div id="citationFormatContainer" class="citation-format-container hidden">
-                                <div class="citation-format-selector">
-                                    <select id="citationFormat" class="citation-select">
-                                        <option value="">Select a citation format...</option>
-                                        <option value="apa">APA (American Psychological Association)</option>
-                                        <option value="mla">MLA (Modern Language Association)</option>
-                                        <option value="chicago">Chicago Manual of Style</option>
-                                        <option value="turabian">Turabian</option>
-                                        <option value="other">Other (specify below)</option>
-                                    </select>
-                                    <div id="otherCitationFormat" class="other-citation-format hidden">
-                                        <label for="customCitationFormat">Specify citation format:</label>
-                                        <input type="text" id="customCitationFormat" placeholder="Enter your preferred citation format">
-                                    </div>
-                                </div>
-                            </div>
                             <label class="option-card">
                                 <input type="radio" name="citation" value="none">
                                 <div class="card-content">
                                     <i class="fas fa-times-circle" aria-hidden="true"></i>
                                     <h3>No Disclosure Required</h3>
-                                    <p class="course-text">Students are not required to acknowledge or cite their use of AI tools.</p>
-                                    <p class="assignment-text hidden">Students are not required to acknowledge or cite their use of AI tools for this assignment.</p>
+                                    <p class="course-text">You are not required to acknowledge your use of AI tools.</p>
+                                    <p class="assignment-text hidden">You are not required to acknowledge your use of AI tools for this assignment.</p>
                                 </div>
                             </label>
                         </div>
@@ -127,27 +101,78 @@
 
                     <!-- Question 4: Documentation -->
                     <div class="question-container" id="question4" data-question="documentation">
-                        <h2 class="course-text">What documentation is required for AI tool usage in your course?</h2>
-                        <h2 class="assignment-text hidden">What documentation is required for AI tool usage in this assignment?</h2>
-                        <div class="options-grid">
-                            <label class="option-card">
-                                <input type="radio" name="documentation" value="detailed" required>
+                        <h2 class="course-text">What additional documentation or assignments are required for AI tool usage in your course?</h2>
+                        <h2 class="assignment-text hidden">What additional documentation or assignments are required for AI tool usage in this assignment?</h2>
+                        <div class="options-grid documentation-options">
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="documentation" value="tools">
                                 <div class="card-content">
-                                    <i class="fas fa-file-alt" aria-hidden="true"></i>
-                                    <h3>Detailed Documentation</h3>
-                                    <p class="course-text">Students must document all AI tool usage, including prompts and outputs.</p>
-                                    <p class="assignment-text hidden">Students must document all AI tool usage for this assignment, including prompts and outputs.</p>
+                                    <i class="fas fa-tools" aria-hidden="true"></i>
+                                    <h3>Document Platforms</h3>
+                                    <p class="course-text">You must document which AI platforms and tools you used.</p>
+                                    <p class="assignment-text hidden">You must document which AI platforms and tools you used for this assignment.</p>
                                 </div>
                             </label>
-                            <label class="option-card">
-                                <input type="radio" name="documentation" value="basic">
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="documentation" value="prompts">
                                 <div class="card-content">
-                                    <i class="fas fa-clipboard-list" aria-hidden="true"></i>
-                                    <h3>Basic Documentation</h3>
-                                    <p class="course-text">Simple acknowledgment of AI tool usage is sufficient.</p>
-                                    <p class="assignment-text hidden">Simple acknowledgment of AI tool usage for this assignment is sufficient.</p>
+                                    <i class="fas fa-file-export" aria-hidden="true"></i>
+                                    <h3>Submit Prompts & Outputs</h3>
+                                    <p class="course-text">You must include your prompts and AI outputs with your assignment submission.</p>
+                                    <p class="assignment-text hidden">You must include your prompts and AI outputs with this assignment submission.</p>
                                 </div>
                             </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="documentation" value="citation">
+                                <div class="card-content">
+                                    <i class="fas fa-file-signature" aria-hidden="true"></i>
+                                    <h3>Formal Citation Required</h3>
+                                    <p class="course-text">You must provide formal citations for AI-generated content.</p>
+                                    <p class="assignment-text hidden">You must provide formal citations for AI-generated content in this assignment.</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="documentation" value="reflection">
+                                <div class="card-content">
+                                    <i class="fas fa-brain" aria-hidden="true"></i>
+                                    <h3>Additional Reflection</h3>
+                                    <p class="course-text">You must include a reflection on your AI usage and learning process.</p>
+                                    <p class="assignment-text hidden">You must include a reflection on your AI usage and learning process for this assignment.</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="documentation" value="factcheck">
+                                <div class="card-content">
+                                    <i class="fas fa-check-double" aria-hidden="true"></i>
+                                    <h3>Fact Check</h3>
+                                    <p class="course-text">You must verify AI-generated information against trusted sources and document your fact-checking process.</p>
+                                    <p class="assignment-text hidden">You must verify AI-generated information against trusted sources and document your fact-checking process for this assignment.</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="documentation" value="multitools">
+                                <div class="card-content">
+                                    <i class="fas fa-code-compare" aria-hidden="true"></i>
+                                    <h3>Compare Multiple Tools</h3>
+                                    <p class="course-text">You must compare results from multiple AI tools and analyze the differences.</p>
+                                    <p class="assignment-text hidden">You must compare results from multiple AI tools and analyze the differences for this assignment.</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="documentation" value="other">
+                                <div class="card-content">
+                                    <i class="fas fa-plus-circle" aria-hidden="true"></i>
+                                    <h3>Other Requirements</h3>
+                                    <p class="course-text">Additional documentation or assignment requirements (specify below).</p>
+                                    <p class="assignment-text hidden">Additional documentation or assignment requirements (specify below).</p>
+                                </div>
+                            </label>
+                            <div id="otherDocumentationContainer" class="other-documentation-container hidden">
+                                <div class="other-documentation-input">
+                                    <label for="customDocumentation">Specify additional requirements:</label>
+                                    <textarea id="customDocumentation" placeholder="Enter your additional documentation or assignment requirements" rows="3"></textarea>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </form>

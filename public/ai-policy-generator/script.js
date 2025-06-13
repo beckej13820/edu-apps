@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const citationFormat = document.getElementById('citationFormat');
     const otherCitationFormat = document.getElementById('otherCitationFormat');
     const customCitationFormat = document.getElementById('customCitationFormat');
+    const otherDocumentationContainer = document.getElementById('otherDocumentationContainer');
 
     // Show/hide citation format selector based on citation selection
     function toggleCitationFormat() {
@@ -24,6 +25,16 @@ document.addEventListener('DOMContentLoaded', function() {
             otherCitationFormat.classList.remove('hidden');
         } else {
             otherCitationFormat.classList.add('hidden');
+        }
+    }
+
+    // Show/hide other documentation input
+    function toggleOtherDocumentation() {
+        const otherCheckbox = document.querySelector('input[name="documentation"][value="other"]');
+        if (otherCheckbox && otherCheckbox.checked) {
+            otherDocumentationContainer.classList.remove('hidden');
+        } else {
+            otherDocumentationContainer.classList.add('hidden');
         }
     }
 
@@ -56,10 +67,46 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Get documentation text
+    function getDocumentationText() {
+        const selectedOptions = Array.from(document.querySelectorAll('input[name="documentation"]:checked'))
+            .map(checkbox => {
+                if (checkbox.value === 'other') {
+                    const customText = document.getElementById('customDocumentation').value.trim();
+                    return {
+                        text: customText,
+                        icon: 'fas fa-plus-circle'
+                    };
+                }
+                const cardContent = checkbox.closest('.option-card').querySelector('.card-content');
+                return {
+                    text: cardContent.querySelector('p:not(.hidden)').textContent,
+                    icon: cardContent.querySelector('i').className
+                };
+            })
+            .filter(item => item.text);
+
+        if (selectedOptions.length === 0) return '';
+        
+        const isCourse = document.querySelector('input[name="policyScope"]:checked').value === 'course';
+        const context = isCourse ? 'in this course' : 'for this assignment';
+        
+        const header = `If you use AI ${context}, you must also:`;
+        const requirements = selectedOptions.map(item => 
+            `<div class="requirement-item">
+                <i class="${item.icon}"></i>
+                <span>${item.text}</span>
+            </div>`
+        ).join('');
+
+        return `${header}\n${requirements}`;
+    }
+
     // Update policy preview
     function updatePolicyPreview() {
         const formData = new FormData(form);
         const policySections = [];
+        let documentationAdded = false;
 
         // Process each question and its answer
         for (let [name, value] of formData.entries()) {
@@ -69,44 +116,39 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const questionContainer = document.querySelector(`[data-question="${name}"]`);
             if (questionContainer && !questionContainer.classList.contains('hidden')) {
-                const selectedOption = questionContainer.querySelector(`input[name="${name}"]:checked`);
-                if (selectedOption) {
-                    const cardContent = selectedOption.closest('.option-card').querySelector('.card-content');
-                    const icon = cardContent.querySelector('i').className;
-                    const answer = cardContent.querySelector('p:not(.hidden)').textContent;
-                    
-                    // Convert teacher-focused language to student-focused language
-                    let studentText = answer;
-                    if (name === 'policyScope') {
-                        studentText = answer.replace('This policy will apply', 'This policy applies');
-                    } else if (name === 'aiUsage') {
-                        studentText = answer.replace('AI tools are', 'You may');
-                    } else if (name === 'citation') {
-                        studentText = answer.replace('Students must', 'You must').replace('Students are not required', 'You are not required');
-                        
-                        // Add citation format if formal citation is required
-                        if (selectedOption.value === 'formal') {
-                            const citationFormat = document.getElementById('citationFormat');
-                            if (citationFormat.value) {
-                                let formatText = '';
-                                if (citationFormat.value === 'other') {
-                                    formatText = formData.get('customCitationFormat');
-                                } else {
-                                    formatText = citationFormat.options[citationFormat.selectedIndex].text;
-                                }
-                                if (formatText) {
-                                    studentText += ` Please use the ${formatText} format for your citations.`;
-                                }
-                            }
+                if (name === 'documentation' && !documentationAdded) {
+                    const selectedOptions = Array.from(document.querySelectorAll('input[name="documentation"]:checked'));
+                    if (selectedOptions.length > 0) {
+                        const text = getDocumentationText();
+                        if (text) {
+                            policySections.push({
+                                text: text,
+                                icon: 'fas fa-tasks',
+                                isDocumentation: true
+                            });
+                            documentationAdded = true;
                         }
-                    } else if (name === 'documentation') {
-                        studentText = answer.replace('Students must', 'You must').replace('Simple acknowledgment', 'A simple acknowledgment');
                     }
-                    
-                    policySections.push({
-                        text: studentText,
-                        icon
-                    });
+                } else if (name !== 'documentation') {
+                    const selectedOption = questionContainer.querySelector(`input[name="${name}"]:checked`);
+                    if (selectedOption) {
+                        const cardContent = selectedOption.closest('.option-card').querySelector('.card-content');
+                        const icon = cardContent.querySelector('i').className;
+                        const answer = cardContent.querySelector('p:not(.hidden)').textContent;
+                        
+                        // Convert teacher-focused language to student-focused language
+                        let studentText = answer;
+                        if (name === 'policyScope') {
+                            studentText = answer.replace('This policy will apply', 'This policy applies');
+                        } else if (name === 'aiUsage') {
+                            studentText = answer.replace('AI tools are', 'You may');
+                        }
+                        
+                        policySections.push({
+                            text: studentText,
+                            icon
+                        });
+                    }
                 }
             }
         }
@@ -114,12 +156,27 @@ document.addEventListener('DOMContentLoaded', function() {
         // Generate policy statement
         let policyHTML = '';
         policySections.forEach(section => {
-            policyHTML += `
-                <div class="policy-section">
-                    <i class="${section.icon}"></i>
-                    <p>${section.text}</p>
-                </div>
-            `;
+            if (section.isDocumentation) {
+                const [header, ...requirements] = section.text.split('\n');
+                policyHTML += `
+                    <div class="policy-section">
+                        <i class="${section.icon}"></i>
+                        <div class="documentation-section">
+                            <p class="documentation-header">${header}</p>
+                            <div class="documentation-requirements">
+                                ${requirements.join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                policyHTML += `
+                    <div class="policy-section">
+                        <i class="${section.icon}"></i>
+                        <p>${section.text}</p>
+                    </div>
+                `;
+            }
         });
 
         previewContainer.innerHTML = policyHTML || '<p>Select options to generate your policy statement.</p>';
@@ -135,6 +192,8 @@ document.addEventListener('DOMContentLoaded', function() {
             toggleCitationFormat();
         } else if (e.target.id === 'citationFormat') {
             toggleOtherCitationFormat();
+        } else if (e.target.name === 'documentation') {
+            toggleOtherDocumentation();
         }
         updatePolicyPreview();
     });
@@ -144,9 +203,12 @@ document.addEventListener('DOMContentLoaded', function() {
         form.reset();
         citationFormatContainer.classList.add('hidden');
         otherCitationFormat.classList.add('hidden');
+        otherDocumentationContainer.classList.add('hidden');
         document.getElementById('question3').classList.remove('hidden');
         document.getElementById('question4').classList.remove('hidden');
         updatePolicyScope();
+        toggleCitationFormat();
+        handleConditionalQuestions();
         updatePolicyPreview();
     });
 
@@ -154,9 +216,8 @@ document.addEventListener('DOMContentLoaded', function() {
     copyBtn.addEventListener('click', function() {
         const policyText = Array.from(previewContainer.querySelectorAll('.policy-section'))
             .map(section => {
-                const question = section.querySelector('strong').textContent;
-                const answer = section.querySelector('p').textContent.replace(question, '').trim();
-                return `${question}\n${answer}`;
+                const answer = section.querySelector('p').textContent.trim();
+                return answer;
             })
             .join('\n\n');
 
@@ -166,6 +227,40 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 copyBtn.textContent = originalText;
             }, 2000);
+        });
+    });
+
+    // Handle citation requirements
+    const citationInputs = document.querySelectorAll('input[name="citation"]');
+    citationInputs.forEach(input => {
+        input.addEventListener('change', () => {
+            const selectedValue = input.value;
+            const documentationSection = document.getElementById('question4');
+            
+            // Show/hide documentation section based on disclosure requirement
+            if (selectedValue === 'none') {
+                documentationSection.classList.add('hidden');
+                // Uncheck all documentation checkboxes
+                document.querySelectorAll('input[name="documentation"]').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+            } else {
+                documentationSection.classList.remove('hidden');
+            }
+            
+            updatePolicyPreview();
+        });
+    });
+
+    // Handle documentation requirements
+    const documentationInputs = document.querySelectorAll('input[name="documentation"]');
+    documentationInputs.forEach(input => {
+        input.addEventListener('change', () => {
+            if (input.value === 'other') {
+                const container = document.getElementById('otherDocumentationContainer');
+                container.classList.toggle('hidden', !input.checked);
+            }
+            updatePolicyPreview();
         });
     });
 
