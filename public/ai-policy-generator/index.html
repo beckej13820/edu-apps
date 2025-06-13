@@ -48,24 +48,51 @@
 
             <!-- Question 2: Citation Requirements -->
             <div class="question-container hidden" id="question2">
-                <h2>What are the citation requirements for AI-generated content?</h2>
+                <h2>What are the requirements for disclosing AI use?</h2>
                 <div class="options-grid">
                     <label class="option-card">
-                        <input type="radio" name="citation" value="required" required>
+                        <input type="radio" name="citation" value="simple" required>
                         <div class="card-content">
-                            <i class="fas fa-quote-right" aria-hidden="true"></i>
-                            <h3>Required</h3>
-                            <p>All AI-generated content must be properly cited and documented.</p>
+                            <i class="fas fa-check-circle" aria-hidden="true"></i>
+                            <h3>Simple Acknowledgement</h3>
+                            <p>Students must include a simple statement acknowledging their use of AI tools.</p>
                         </div>
                     </label>
                     <label class="option-card">
-                        <input type="radio" name="citation" value="optional">
+                        <input type="radio" name="citation" value="formal">
                         <div class="card-content">
-                            <i class="fas fa-info-circle" aria-hidden="true"></i>
-                            <h3>Optional</h3>
-                            <p>Citation is recommended but not mandatory for AI-generated content.</p>
+                            <i class="fas fa-file-signature" aria-hidden="true"></i>
+                            <h3>Formal Citation Required</h3>
+                            <p>Students must both acknowledge AI use and provide formal citations for AI-generated content.</p>
                         </div>
                     </label>
+                    <label class="option-card">
+                        <input type="radio" name="citation" value="none">
+                        <div class="card-content">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                            <h3>No Disclosure Required</h3>
+                            <p>Students are not required to acknowledge or cite their use of AI tools.</p>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Citation Format Selector -->
+                <div id="citationFormatContainer" class="citation-format-container hidden">
+                    <h3>Citation Format</h3>
+                    <div class="citation-format-selector">
+                        <select id="citationFormat" class="citation-select">
+                            <option value="">Select a citation format...</option>
+                            <option value="apa">APA (American Psychological Association)</option>
+                            <option value="mla">MLA (Modern Language Association)</option>
+                            <option value="chicago">Chicago Manual of Style</option>
+                            <option value="turabian">Turabian</option>
+                            <option value="other">Other (specify below)</option>
+                        </select>
+                        <div id="otherCitationFormat" class="other-citation-format hidden">
+                            <label for="customCitationFormat">Specify citation format:</label>
+                            <input type="text" id="customCitationFormat" placeholder="Enter your preferred citation format">
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -106,6 +133,7 @@
 
             <div class="navigation-buttons">
                 <button type="button" id="prevBtn" class="btn" disabled>Previous</button>
+                <button type="button" id="startOverBtn" class="btn btn-secondary">Start Over</button>
                 <button type="button" id="nextBtn" class="btn">Next</button>
             </div>
         </form>

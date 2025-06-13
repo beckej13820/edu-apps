@@ -5,12 +5,57 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressBar = document.querySelector('.progress-bar');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
+    const startOverBtn = document.getElementById('startOverBtn');
     const downloadRTF = document.getElementById('downloadRTF');
     const copyHTML = document.getElementById('copyHTML');
+    const citationFormatContainer = document.getElementById('citationFormatContainer');
+    const citationFormat = document.getElementById('citationFormat');
+    const otherCitationFormat = document.getElementById('otherCitationFormat');
+    const customCitationFormat = document.getElementById('customCitationFormat');
 
     let currentQuestion = 0;
     const totalQuestions = questions.length;
     let questionHistory = [0]; // Track question navigation history
+
+    // Handle citation format selection
+    function handleCitationFormat() {
+        const selectedCitation = document.querySelector('input[name="citation"]:checked');
+        if (selectedCitation && selectedCitation.value === 'formal') {
+            citationFormatContainer.classList.remove('hidden');
+            if (citationFormat.value === 'other') {
+                otherCitationFormat.classList.remove('hidden');
+            } else {
+                otherCitationFormat.classList.add('hidden');
+            }
+        } else {
+            citationFormatContainer.classList.add('hidden');
+            otherCitationFormat.classList.add('hidden');
+        }
+    }
+
+    // Add citation format change handler
+    citationFormat.addEventListener('change', () => {
+        if (citationFormat.value === 'other') {
+            otherCitationFormat.classList.remove('hidden');
+            customCitationFormat.focus(); // Focus the input when shown
+        } else {
+            otherCitationFormat.classList.add('hidden');
+            customCitationFormat.value = ''; // Clear the custom input when hidden
+        }
+    });
+
+    // Add citation radio button change handler
+    document.querySelectorAll('input[name="citation"]').forEach(radio => {
+        radio.addEventListener('change', handleCitationFormat);
+    });
+
+    // Handle custom citation format input
+    customCitationFormat.addEventListener('input', () => {
+        // Enable/disable the next button based on whether there's text in the custom format
+        if (citationFormat.value === 'other') {
+            nextBtn.disabled = !customCitationFormat.value.trim();
+        }
+    });
 
     // Policy templates
     const policyTemplates = {
@@ -29,13 +74,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
         citation: {
-            required: {
-                icon: 'fa-quote-right',
-                text: 'All AI-generated content must be properly cited and documented.'
+            simple: {
+                icon: 'fa-check-circle',
+                text: 'Students must include a simple statement acknowledging their use of AI tools.'
             },
-            optional: {
-                icon: 'fa-info-circle',
-                text: 'Citation is recommended but not mandatory for AI-generated content.'
+            formal: {
+                icon: 'fa-file-signature',
+                text: 'Students must both acknowledge AI use and provide formal citations for AI-generated content.'
+            },
+            none: {
+                icon: 'fa-times-circle',
+                text: 'Students are not required to acknowledge or cite their use of AI tools.'
             }
         },
         documentation: {
@@ -49,6 +98,37 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     };
+
+    // Reset form to initial state
+    function resetForm() {
+        // Clear all radio button selections
+        document.querySelectorAll('input[type="radio"]').forEach(input => {
+            input.checked = false;
+        });
+        
+        // Reset citation format
+        citationFormat.value = '';
+        customCitationFormat.value = '';
+        citationFormatContainer.classList.add('hidden');
+        otherCitationFormat.classList.add('hidden');
+        
+        // Reset question history and current question
+        currentQuestion = 0;
+        questionHistory = [0];
+        
+        // Show first question
+        showQuestion(0);
+        
+        // Clear policy statement
+        document.getElementById('policyStatement').innerHTML = '';
+    }
+
+    // Add start over button handler
+    startOverBtn.addEventListener('click', () => {
+        if (confirm('Are you sure you want to start over? All your selections will be cleared.')) {
+            resetForm();
+        }
+    });
 
     // Update progress bar
     function updateProgress() {
@@ -76,9 +156,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (aiUsage === 'prohibited') {
             // Skip to summary if AI is prohibited
             currentQuestion = totalQuestions;
+            questionHistory.push(currentQuestion);
             showQuestion(currentQuestion);
             generatePolicy();
+            return true; // Indicate that we've skipped to the end
         }
+        return false; // Indicate normal flow should continue
     }
 
     // Navigation
@@ -94,8 +177,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // If this is the AI usage question, check the selection
             if (currentQuestion === 0) {
-                handleAIUsageSelection();
-                return;
+                const skipped = handleAIUsageSelection();
+                if (skipped) return; // If we skipped to the end, don't continue
             }
             
             currentQuestion++;
@@ -117,6 +200,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Get citation format text
+    function getCitationFormatText() {
+        if (citationFormat.value === 'other') {
+            return customCitationFormat.value || 'custom format';
+        }
+        return citationFormat.options[citationFormat.selectedIndex].text;
+    }
+
     // Generate policy statement
     function generatePolicy() {
         const aiUsage = document.querySelector('input[name="aiUsage"]:checked').value;
@@ -128,7 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p>${policyTemplates.aiUsage[aiUsage].text}</p>
                 </div>`;
 
-        // Only include citation and documentation if AI is not prohibited
         if (aiUsage !== 'prohibited') {
             const citation = document.querySelector('input[name="citation"]:checked').value;
             const documentation = document.querySelector('input[name="documentation"]:checked').value;
@@ -136,7 +226,13 @@ document.addEventListener('DOMContentLoaded', () => {
             policyHTML += `
                 <div class="policy-section">
                     <i class="fas ${policyTemplates.citation[citation].icon}"></i>
-                    <p>${policyTemplates.citation[citation].text}</p>
+                    <p>${policyTemplates.citation[citation].text}`;
+
+            if (citation !== 'none' && citationFormat.value) {
+                policyHTML += ` Citations should follow the ${getCitationFormatText()}.`;
+            }
+
+            policyHTML += `</p>
                 </div>
                 <div class="policy-section">
                     <i class="fas ${policyTemplates.documentation[documentation].icon}"></i>
