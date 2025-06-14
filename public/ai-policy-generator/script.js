@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const previewContainer = document.getElementById('previewContainer');
     const startOverBtn = document.getElementById('startOverBtn');
     const copyBtn = document.getElementById('copyBtn');
+    const downloadRTFBtn = document.getElementById('downloadRTF');
     const citationFormatContainer = document.getElementById('citationFormatContainer');
     const citationFormat = document.getElementById('citationFormat');
     const otherCitationFormat = document.getElementById('otherCitationFormat');
@@ -13,6 +14,61 @@ document.addEventListener('DOMContentLoaded', function() {
     const otherCitationStyleContainer = document.getElementById('otherCitationStyleContainer');
     const reflectionDirectionsContainer = document.getElementById('reflectionDirectionsContainer');
 
+    // Embed Modal Elements
+    const embedBtn = document.getElementById('embedBtn');
+    const embedModal = document.getElementById('embedModal');
+    const closeModal = document.querySelector('.close-modal');
+    const embedCode = document.getElementById('embedCode');
+    const copyEmbedBtn = document.getElementById('copyEmbedBtn');
+
+    // Check if we're in an iframe
+    const isInIframe = window.self !== window.top;
+
+    // Function to send height updates to parent window
+    function updateIframeHeight() {
+        if (isInIframe) {
+            const height = document.documentElement.scrollHeight;
+            window.parent.postMessage({ type: 'resize', height }, '*');
+        }
+    }
+
+    // Function to send policy updates to parent window
+    function sendPolicyUpdate() {
+        if (isInIframe) {
+            const policyText = Array.from(previewContainer.querySelectorAll('.policy-section'))
+                .map(section => {
+                    const answer = section.querySelector('p').textContent.trim();
+                    return answer;
+                })
+                .join('\n\n');
+            
+            window.parent.postMessage({ 
+                type: 'policyUpdate', 
+                policy: policyText 
+            }, '*');
+        }
+    }
+
+    // Listen for messages from parent window
+    window.addEventListener('message', function(event) {
+        // Verify origin if needed
+        // if (event.origin !== "https://trusted-domain.com") return;
+
+        if (event.data.type === 'getPolicy') {
+            const policyText = Array.from(previewContainer.querySelectorAll('.policy-section'))
+                .map(section => {
+                    const answer = section.querySelector('p').textContent.trim();
+                    return answer;
+                })
+                .join('\n\n');
+            
+            event.source.postMessage({ 
+                type: 'policyResponse', 
+                policy: policyText 
+            }, event.origin);
+        }
+    });
+
     // Show/hide citation format selector based on citation selection
     function toggleCitationFormat() {
         const selectedOption = document.querySelector('input[name="citation"]:checked');
@@ -21,6 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             citationFormatContainer.classList.add('hidden');
         }
+        updateIframeHeight();
     }
 
     // Show/hide other citation format input
@@ -30,6 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             otherCitationFormat.classList.add('hidden');
         }
+        updateIframeHeight();
     }
 
     // Show/hide citation style dropdown based on formal citation selection
@@ -61,6 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             otherDocumentationContainer.classList.add('hidden');
         }
+        updateIframeHeight();
     }
 
     // Show/hide reflection directions input
@@ -95,6 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 allowedUsesQuestion.classList.add('hidden');
             }
         }
+        updateIframeHeight();
     }
 
     // Update text based on policy scope
@@ -109,6 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 el.classList.toggle('hidden', isCourse);
             });
         }
+        updateIframeHeight();
     }
 
     // Get documentation text
@@ -165,8 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (selectedOptions.length === 0) return '';
         
         const policyScope = document.querySelector('input[name="policyScope"]:checked');
-        const isCourse = policyScope ? policyScope.value === 'course' : true;
-        const context = isCourse ? 'in this course' : 'for this assignment';
+        const context = policyScope && policyScope.value === 'course' ? 'in this course' : 'for this assignment';
         
         const header = `If you use AI ${context}, you must also:`;
         const requirements = selectedOptions.map(item => 
@@ -215,8 +275,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function updatePolicyPreview() {
         const formData = new FormData(form);
         const policySections = [];
-        let documentationAdded = false;
-        let allowedUsesAdded = false;
+        let documentationProcessed = false;
 
         // Process each question and its answer
         for (let [name, value] of formData.entries()) {
@@ -226,7 +285,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const questionContainer = document.querySelector(`[data-question="${name}"]`);
             if (questionContainer && !questionContainer.classList.contains('hidden')) {
-                if (name === 'documentation' && !documentationAdded) {
+                if (name === 'documentation' && !documentationProcessed) {
                     const selectedOptions = Array.from(document.querySelectorAll('input[name="documentation"]:checked'));
                     if (selectedOptions.length > 0) {
                         const text = getDocumentationText();
@@ -236,23 +295,10 @@ document.addEventListener('DOMContentLoaded', function() {
                                 icon: 'fas fa-tasks',
                                 isDocumentation: true
                             });
-                            documentationAdded = true;
                         }
                     }
-                } else if (name === 'allowedUses' && !allowedUsesAdded) {
-                    const selectedOptions = Array.from(document.querySelectorAll('input[name="allowedUses"]:checked'));
-                    if (selectedOptions.length > 0) {
-                        const text = getAllowedUsesText();
-                        if (text) {
-                            policySections.push({
-                                text: text,
-                                icon: 'fas fa-check-circle',
-                                isDocumentation: true
-                            });
-                            allowedUsesAdded = true;
-                        }
-                    }
-                } else if (name !== 'documentation' && name !== 'allowedUses') {
+                    documentationProcessed = true;
+                } else if (name !== 'documentation') {
                     const selectedOption = questionContainer.querySelector(`input[name="${name}"]:checked`);
                     if (selectedOption) {
                         const cardContent = selectedOption.closest('.option-card').querySelector('.card-content');
@@ -303,6 +349,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         previewContainer.innerHTML = policyHTML || '<p>Select options to generate your policy statement.</p>';
+        updateIframeHeight();
+        sendPolicyUpdate();
     }
 
     // Event Listeners
@@ -313,7 +361,7 @@ document.addEventListener('DOMContentLoaded', function() {
             handleConditionalQuestions();
         } else if (e.target.name === 'citation') {
             toggleCitationFormat();
-        } else if (e.target.id === 'citationFormat') {
+        } else if (e.target.name === 'citation_format') {
             toggleOtherCitationFormat();
         } else if (e.target.name === 'documentation') {
             toggleOtherDocumentation();
@@ -368,6 +416,35 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Download RTF button
+    downloadRTFBtn.addEventListener('click', function() {
+        const policyText = Array.from(previewContainer.querySelectorAll('.policy-section'))
+            .map(section => {
+                const answer = section.querySelector('p').textContent.trim();
+                return answer;
+            })
+            .join('\n\n');
+
+        const rtfContent = `{\\rtf1\\ansi\\ansicpg1252\\cocoartf2639
+{\\fonttbl\\f0\\fswiss\\fcharset0 Helvetica;}
+{\\colortbl;\\red0\\green0\\blue0;}
+\\paperw11900\\paperh16840\\margl1440\\margr1440\\vieww11520\\viewh8400\\viewkind0
+\\pard\\tx566\\tx1133\\tx1700\\tx2267\\tx2834\\tx3401\\tx3968\\tx4535\\tx5102\\tx5669\\tx6236\\tx6803\\pardirnatural\\partightenfactor0
+
+\\f0\\fs24 ${policyText.replace(/\n/g, '\\par ')}
+}`;
+
+        const blob = new Blob([rtfContent], { type: 'application/rtf' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'ai-policy.rtf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
+
     // Handle citation requirements
     const citationInputs = document.querySelectorAll('input[name="citation"]');
     citationInputs.forEach(input => {
@@ -402,9 +479,61 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Embed functionality
+    function generateEmbedCode() {
+        const currentUrl = window.location.href;
+        return `<iframe 
+    src="${currentUrl}" 
+    style="width: 100%; border: none; min-height: 600px;"
+    title="AI Policy Generator"
+    allow="clipboard-write"
+></iframe>`;
+    }
+
+    // Show modal
+    embedBtn.addEventListener('click', function() {
+        embedCode.textContent = generateEmbedCode();
+        embedModal.classList.remove('hidden');
+    });
+
+    // Close modal
+    closeModal.addEventListener('click', function() {
+        embedModal.classList.add('hidden');
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+        if (event.target === embedModal) {
+            embedModal.classList.add('hidden');
+        }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && !embedModal.classList.contains('hidden')) {
+            embedModal.classList.add('hidden');
+        }
+    });
+
+    // Copy embed code
+    copyEmbedBtn.addEventListener('click', function() {
+        navigator.clipboard.writeText(embedCode.textContent).then(() => {
+            const originalText = copyEmbedBtn.innerHTML;
+            copyEmbedBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => {
+                copyEmbedBtn.innerHTML = originalText;
+            }, 2000);
+        });
+    });
+
     // Initialize
     updatePolicyScope();
-    toggleCitationFormat();
     handleConditionalQuestions();
+    toggleCitationFormat();
+    toggleOtherCitationFormat();
+    toggleOtherDocumentation();
     updatePolicyPreview();
+
+    // Update iframe height on window resize
+    window.addEventListener('resize', updateIframeHeight);
 }); 
