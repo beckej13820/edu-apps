@@ -342,18 +342,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Start Over button
     startOverBtn.addEventListener('click', function() {
+        // Clear the policy preview first
+        previewContainer.innerHTML = '<p>Select options to generate your policy statement.</p>';
+        
+        // Reset the form and all inputs
         form.reset();
         citationFormatContainer.classList.add('hidden');
         otherCitationFormat.classList.add('hidden');
         otherDocumentationContainer.classList.add('hidden');
         document.getElementById('otherUseCasesContainer').classList.add('hidden');
+        
+        // Reset all questions to their initial state
         document.getElementById('question3').classList.remove('hidden');
         document.getElementById('question4').classList.remove('hidden');
         document.getElementById('question5').classList.remove('hidden');
+        
+        // Reset custom inputs
+        document.getElementById('customCitationFormat').value = '';
+        document.getElementById('customDocumentation').value = '';
+        document.getElementById('customUseCases').value = '';
+        
+        // Update all conditional displays
         updatePolicyScope();
         toggleCitationFormat();
         handleConditionalQuestions();
-        updatePolicyPreview();
+        
+        // Force the preview to stay cleared
+        setTimeout(() => {
+            previewContainer.innerHTML = '<p>Select options to generate your policy statement.</p>';
+        }, 0);
     });
 
     // Copy button
