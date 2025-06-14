@@ -233,6 +233,48 @@ document.addEventListener('DOMContentLoaded', function() {
         let documentationProcessed = false;
         let useCasesProcessed = false;
 
+        // Get AI usage selection
+        const aiUsage = document.querySelector('input[name="aiUsage"]:checked');
+        const requiresDisclosure = document.querySelector('input[name="citation"][value="required"]:checked') !== null;
+        const hasDocumentation = document.querySelectorAll('input[name="documentation"]:checked').length > 0;
+
+        // Generate header based on selections
+        let header = '';
+        if (aiUsage) {
+            switch (aiUsage.value) {
+                case 'encouraged':
+                    header = 'AI Use Permitted';
+                    break;
+                case 'limited':
+                    header = 'Some AI Use Permitted';
+                    break;
+                case 'prohibited':
+                    header = 'AI Prohibited';
+                    break;
+            }
+
+            // Add disclosure requirement if needed
+            if (requiresDisclosure) {
+                header += ', however use must be disclosed';
+            }
+
+            // Add documentation requirement if needed
+            if (hasDocumentation) {
+                if (requiresDisclosure) {
+                    header += ' and additional documentation needs to be submitted';
+                } else {
+                    header += ', however additional documentation needs to be submitted';
+                }
+            }
+
+            // Add header as first section
+            policySections.push({
+                text: header,
+                icon: 'fas fa-info-circle',
+                isHeader: true
+            });
+        }
+
         // Process each question and its answer
         for (let [name, value] of formData.entries()) {
             if (name === 'citation_format' && value === 'other') {
@@ -241,6 +283,11 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const questionContainer = document.querySelector(`[data-question="${name}"]`);
             if (questionContainer && !questionContainer.classList.contains('hidden')) {
+                // Skip the policyScope section but keep its contextual effects
+                if (name === 'policyScope') {
+                    continue;
+                }
+                
                 if (name === 'documentation' && !documentationProcessed) {
                     const selectedOptions = Array.from(document.querySelectorAll('input[name="documentation"]:checked'));
                     if (selectedOptions.length > 0) {
@@ -267,6 +314,18 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     }
                     useCasesProcessed = true;
+                } else if (name === 'citation') {
+                    const selectedOption = questionContainer.querySelector(`input[name="${name}"]:checked`);
+                    if (selectedOption && selectedOption.value === 'required') {
+                        const cardContent = selectedOption.closest('.option-card').querySelector('.card-content');
+                        const icon = cardContent.querySelector('i').className;
+                        const answer = cardContent.querySelector('p:not(.hidden)').textContent;
+                        
+                        policySections.push({
+                            text: answer,
+                            icon
+                        });
+                    }
                 } else if (name !== 'documentation' && name !== 'useCases') {
                     const selectedOption = questionContainer.querySelector(`input[name="${name}"]:checked`);
                     if (selectedOption) {
@@ -276,9 +335,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         // Convert teacher-focused language to student-focused language
                         let studentText = answer;
-                        if (name === 'policyScope') {
-                            studentText = answer.replace('This policy will apply', 'This policy applies');
-                        } else if (name === 'aiUsage') {
+                        if (name === 'aiUsage') {
                             studentText = answer.replace('AI tools are', 'You may');
                         }
                         
@@ -294,7 +351,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Generate policy statement
         let policyHTML = '';
         policySections.forEach(section => {
-            if (section.isDocumentation) {
+            if (section.isHeader) {
+                policyHTML += `
+                    <div class="policy-header">
+                        <i class="${section.icon}"></i>
+                        <h2>${section.text}</h2>
+                    </div>
+                `;
+            } else if (section.isDocumentation) {
                 const [header, ...requirements] = section.text.split('\n');
                 policyHTML += `
                     <div class="policy-section">
@@ -330,6 +394,8 @@ document.addEventListener('DOMContentLoaded', function() {
             handleConditionalQuestions();
         } else if (e.target.name === 'citation') {
             toggleCitationFormat();
+            // Force immediate preview update when citation changes
+            updatePolicyPreview();
         } else if (e.target.name === 'citation_format') {
             toggleOtherCitationFormat();
         } else if (e.target.name === 'documentation') {
@@ -338,6 +404,29 @@ document.addEventListener('DOMContentLoaded', function() {
             toggleOtherUseCases();
         }
         updatePolicyPreview();
+    });
+
+    // Handle citation requirements
+    const citationInputs = document.querySelectorAll('input[name="citation"]');
+    citationInputs.forEach(input => {
+        input.addEventListener('change', () => {
+            const selectedValue = input.value;
+            const documentationSection = document.getElementById('question4');
+            
+            // Show/hide documentation section based on disclosure requirement
+            if (selectedValue === 'none') {
+                documentationSection.classList.add('hidden');
+                // Uncheck all documentation checkboxes
+                document.querySelectorAll('input[name="documentation"]').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+            } else {
+                documentationSection.classList.remove('hidden');
+            }
+            
+            // Force immediate preview update
+            updatePolicyPreview();
+        });
     });
 
     // Start Over button
@@ -377,9 +466,19 @@ document.addEventListener('DOMContentLoaded', function() {
     copyBtn.addEventListener('click', function() {
         const policyText = Array.from(previewContainer.querySelectorAll('.policy-section'))
             .map(section => {
-                const answer = section.querySelector('p').textContent.trim();
-                return answer;
+                if (section.querySelector('.documentation-section')) {
+                    // Handle documentation and use cases sections
+                    const header = section.querySelector('.documentation-header').textContent;
+                    const requirements = Array.from(section.querySelectorAll('.requirement-item'))
+                        .map(item => item.querySelector('span').textContent)
+                        .join('\n');
+                    return `${header}\n${requirements}`;
+                } else {
+                    // Handle regular policy sections
+                    return section.querySelector('p').textContent.trim();
+                }
             })
+            .filter(text => text) // Remove any empty sections
             .join('\n\n');
 
         navigator.clipboard.writeText(policyText).then(() => {
@@ -395,9 +494,19 @@ document.addEventListener('DOMContentLoaded', function() {
     downloadRTFBtn.addEventListener('click', function() {
         const policyText = Array.from(previewContainer.querySelectorAll('.policy-section'))
             .map(section => {
-                const answer = section.querySelector('p').textContent.trim();
-                return answer;
+                if (section.querySelector('.documentation-section')) {
+                    // Handle documentation and use cases sections
+                    const header = section.querySelector('.documentation-header').textContent;
+                    const requirements = Array.from(section.querySelectorAll('.requirement-item'))
+                        .map(item => item.querySelector('span').textContent)
+                        .join('\n');
+                    return `${header}\n${requirements}`;
+                } else {
+                    // Handle regular policy sections
+                    return section.querySelector('p').textContent.trim();
+                }
             })
+            .filter(text => text) // Remove any empty sections
             .join('\n\n');
 
         const rtfContent = `{\\rtf1\\ansi\\ansicpg1252\\cocoartf2639
@@ -407,109 +516,6 @@ document.addEventListener('DOMContentLoaded', function() {
 \\pard\\tx566\\tx1133\\tx1700\\tx2267\\tx2834\\tx3401\\tx3968\\tx4535\\tx5102\\tx5669\\tx6236\\tx6803\\pardirnatural\\partightenfactor0
 
 \\f0\\fs24 ${policyText.replace(/\n/g, '\\par ')}
-}`;
-
-        const blob = new Blob([rtfContent], { type: 'application/rtf' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'ai-policy.rtf';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+}`
     });
-
-    // Handle citation requirements
-    const citationInputs = document.querySelectorAll('input[name="citation"]');
-    citationInputs.forEach(input => {
-        input.addEventListener('change', () => {
-            const selectedValue = input.value;
-            const documentationSection = document.getElementById('question4');
-            
-            // Show/hide documentation section based on disclosure requirement
-            if (selectedValue === 'none') {
-                documentationSection.classList.add('hidden');
-                // Uncheck all documentation checkboxes
-                document.querySelectorAll('input[name="documentation"]').forEach(checkbox => {
-                    checkbox.checked = false;
-                });
-            } else {
-                documentationSection.classList.remove('hidden');
-            }
-            
-            updatePolicyPreview();
-        });
-    });
-
-    // Handle documentation requirements
-    const documentationInputs = document.querySelectorAll('input[name="documentation"]');
-    documentationInputs.forEach(input => {
-        input.addEventListener('change', () => {
-            if (input.value === 'other') {
-                const container = document.getElementById('otherDocumentationContainer');
-                container.classList.toggle('hidden', !input.checked);
-            }
-            updatePolicyPreview();
-        });
-    });
-
-    // Embed functionality
-    function generateEmbedCode() {
-        const currentUrl = window.location.href;
-        return `<iframe 
-    src="${currentUrl}" 
-    style="width: 100%; border: none; min-height: 600px;"
-    title="AI Policy Generator"
-    allow="clipboard-write"
-></iframe>`;
-    }
-
-    // Show modal
-    embedBtn.addEventListener('click', function() {
-        embedCode.textContent = generateEmbedCode();
-        embedModal.classList.remove('hidden');
-    });
-
-    // Close modal
-    closeModal.addEventListener('click', function() {
-        embedModal.classList.add('hidden');
-    });
-
-    // Close modal when clicking outside
-    window.addEventListener('click', function(event) {
-        if (event.target === embedModal) {
-            embedModal.classList.add('hidden');
-        }
-    });
-
-    // Close modal with Escape key
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape' && !embedModal.classList.contains('hidden')) {
-            embedModal.classList.add('hidden');
-        }
-    });
-
-    // Copy embed code
-    copyEmbedBtn.addEventListener('click', function() {
-        navigator.clipboard.writeText(embedCode.textContent).then(() => {
-            const originalText = copyEmbedBtn.innerHTML;
-            copyEmbedBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-            setTimeout(() => {
-                copyEmbedBtn.innerHTML = originalText;
-            }, 2000);
-        });
-    });
-
-    // Initialize
-    updatePolicyScope();
-    handleConditionalQuestions();
-    toggleCitationFormat();
-    toggleOtherCitationFormat();
-    toggleOtherDocumentation();
-    toggleOtherUseCases();
-    updatePolicyPreview();
-
-    // Update iframe height on window resize
-    window.addEventListener('resize', updateIframeHeight);
-}); 
+});

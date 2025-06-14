@@ -631,4 +631,25 @@ h2 {
     #embedBtn {
         width: 100%;
     }
+}
+
+.policy-header {
+    background-color: #f8f9fa;
+    border-left: 4px solid #007bff;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 4px;
+}
+
+.policy-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.policy-header i {
+    color: #007bff;
+    margin-right: 0.5rem;
+    font-size: 1.25rem;
 } 
