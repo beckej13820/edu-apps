@@ -127,7 +127,13 @@ document.addEventListener('DOMContentLoaded', function() {
             useCasesQuestion.classList.add('hidden');
             citationQuestion.classList.add('hidden');
             documentationQuestion.classList.add('hidden');
+        } else if (aiUsage.value === 'encouraged') {
+            // Hide use cases when AI is allowed (all uses are approved)
+            useCasesQuestion.classList.add('hidden');
+            citationQuestion.classList.remove('hidden');
+            documentationQuestion.classList.remove('hidden');
         } else {
+            // Show all questions for limited use
             useCasesQuestion.classList.remove('hidden');
             citationQuestion.classList.remove('hidden');
             documentationQuestion.classList.remove('hidden');
