@@ -129,7 +129,84 @@
                         </div>
                     </div>
 
-                    <!-- Question 3: Citation Requirements -->
+                    <!-- Question 3: Use Cases -->
+                    <div class="question-container" id="question5" data-question="useCases" role="group" aria-labelledby="use-cases-heading">
+                        <h2 id="use-cases-heading" class="course-text">What are the approved use cases for AI tools in your course?</h2>
+                        <h2 class="assignment-text hidden">What are the approved use cases for AI tools in this assignment?</h2>
+                        <div class="options-grid" role="group" aria-labelledby="use-cases-heading">
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="useCases" value="brainstorming" aria-describedby="brainstorming-desc">
+                                <div class="card-content">
+                                    <i class="fas fa-lightbulb" aria-hidden="true"></i>
+                                    <h3>Brainstorming</h3>
+                                    <p id="brainstorming-desc" class="course-text">Allowed for brainstorming ideas and initial concepts.</p>
+                                    <p class="assignment-text hidden">Allowed for brainstorming ideas and initial concepts for this assignment.</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="useCases" value="research" aria-describedby="research-desc">
+                                <div class="card-content">
+                                    <i class="fas fa-search" aria-hidden="true"></i>
+                                    <h3>Research and Summarization</h3>
+                                    <p id="research-desc" class="course-text">Allowed for research and summarization of sources.</p>
+                                    <p class="assignment-text hidden">Allowed for research and summarization of sources for this assignment.</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="useCases" value="outline" aria-describedby="outline-desc">
+                                <div class="card-content">
+                                    <i class="fas fa-sitemap" aria-hidden="true"></i>
+                                    <h3>Outline and Thesis</h3>
+                                    <p id="outline-desc" class="course-text">Allowed for generating an outline or thesis statement.</p>
+                                    <p class="assignment-text hidden">Allowed for generating an outline or thesis statement for this assignment.</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="useCases" value="content" aria-describedby="content-desc">
+                                <div class="card-content">
+                                    <i class="fas fa-pen-fancy" aria-hidden="true"></i>
+                                    <h3>Content Generation</h3>
+                                    <p id="content-desc" class="course-text">Allowed for generating content or drafts.</p>
+                                    <p class="assignment-text hidden">Allowed for generating content or drafts for this assignment.</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="useCases" value="critique" aria-describedby="critique-desc">
+                                <div class="card-content">
+                                    <i class="fas fa-comments" aria-hidden="true"></i>
+                                    <h3>Critique and Peer Review</h3>
+                                    <p id="critique-desc" class="course-text">Allowed for critique and simulated peer review of your work.</p>
+                                    <p class="assignment-text hidden">Allowed for critique and simulated peer review of your work for this assignment.</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="useCases" value="analysis" aria-describedby="analysis-desc">
+                                <div class="card-content">
+                                    <i class="fas fa-chart-bar" aria-hidden="true"></i>
+                                    <h3>Data Analysis</h3>
+                                    <p id="analysis-desc" class="course-text">Allowed to help analyze data and generate insights.</p>
+                                    <p class="assignment-text hidden">Allowed to help analyze data and generate insights for this assignment.</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="useCases" value="other" aria-describedby="other-use-desc">
+                                <div class="card-content">
+                                    <i class="fas fa-plus-circle" aria-hidden="true"></i>
+                                    <h3>Other Use Cases</h3>
+                                    <p id="other-use-desc" class="course-text">Additional approved use cases (specify below).</p>
+                                    <p class="assignment-text hidden">Additional approved use cases (specify below).</p>
+                                </div>
+                            </label>
+                            <div id="otherUseCasesContainer" class="other-documentation-container hidden" role="group" aria-labelledby="custom-use-label">
+                                <div class="other-documentation-input">
+                                    <label id="custom-use-label" for="customUseCases">Specify other use cases:</label>
+                                    <textarea id="customUseCases" name="customUseCases" placeholder="Enter additional approved use cases" rows="3" aria-labelledby="custom-use-label"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 4: Citation Requirements -->
                     <div class="question-container" id="question3" data-question="citation" role="group" aria-labelledby="citation-heading">
                         <h2 id="citation-heading" class="course-text">What are the requirements for disclosing AI use in your course?</h2>
                         <h2 class="assignment-text hidden">What are the requirements for disclosing AI use for this assignment?</h2>
@@ -155,7 +232,7 @@
                         </div>
                     </div>
 
-                    <!-- Question 4: Documentation -->
+                    <!-- Question 5: Documentation -->
                     <div class="question-container" id="question4" data-question="documentation" role="group" aria-labelledby="documentation-heading">
                         <h2 id="documentation-heading" class="course-text">What additional documentation or assignments are required for AI tool usage in your course?</h2>
                         <h2 class="assignment-text hidden">What additional documentation or assignments are required for AI tool usage in this assignment?</h2>

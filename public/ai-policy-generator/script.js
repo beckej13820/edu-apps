@@ -97,16 +97,38 @@ document.addEventListener('DOMContentLoaded', function() {
         updateIframeHeight();
     }
 
+    // Show/hide other use cases input
+    function toggleOtherUseCases() {
+        const otherCheckbox = document.querySelector('input[name="useCases"][value="other"]');
+        if (otherCheckbox && otherCheckbox.checked) {
+            document.getElementById('otherUseCasesContainer').classList.remove('hidden');
+        } else {
+            document.getElementById('otherUseCasesContainer').classList.add('hidden');
+        }
+        updateIframeHeight();
+    }
+
     // Handle conditional questions based on AI usage
     function handleConditionalQuestions() {
         const aiUsage = document.querySelector('input[name="aiUsage"]:checked');
+        const useCasesQuestion = document.getElementById('question5');
         const citationQuestion = document.getElementById('question3');
         const documentationQuestion = document.getElementById('question4');
 
-        if (aiUsage && aiUsage.value === 'prohibited') {
+        if (!aiUsage) {
+            // If no AI usage is selected yet, show all questions
+            useCasesQuestion.classList.remove('hidden');
+            citationQuestion.classList.remove('hidden');
+            documentationQuestion.classList.remove('hidden');
+            return;
+        }
+
+        if (aiUsage.value === 'prohibited') {
+            useCasesQuestion.classList.add('hidden');
             citationQuestion.classList.add('hidden');
             documentationQuestion.classList.add('hidden');
         } else {
+            useCasesQuestion.classList.remove('hidden');
             citationQuestion.classList.remove('hidden');
             documentationQuestion.classList.remove('hidden');
         }
@@ -163,11 +185,47 @@ document.addEventListener('DOMContentLoaded', function() {
         return `${header}\n${requirements}`;
     }
 
+    // Get use cases text
+    function getUseCasesText() {
+        const selectedOptions = Array.from(document.querySelectorAll('input[name="useCases"]:checked'))
+            .map(checkbox => {
+                if (checkbox.value === 'other') {
+                    const customText = document.getElementById('customUseCases').value.trim();
+                    return {
+                        text: customText,
+                        icon: 'fas fa-plus-circle'
+                    };
+                }
+                const cardContent = checkbox.closest('.option-card').querySelector('.card-content');
+                return {
+                    text: cardContent.querySelector('p:not(.hidden)').textContent,
+                    icon: cardContent.querySelector('i').className
+                };
+            })
+            .filter(item => item.text);
+
+        if (selectedOptions.length === 0) return '';
+        
+        const policyScope = document.querySelector('input[name="policyScope"]:checked');
+        const context = policyScope && policyScope.value === 'course' ? 'in this course' : 'for this assignment';
+        
+        const header = `Approved use cases for AI tools ${context}:`;
+        const requirements = selectedOptions.map(item => 
+            `<div class="requirement-item">
+                <i class="${item.icon}"></i>
+                <span>${item.text}</span>
+            </div>`
+        ).join('');
+
+        return `${header}\n${requirements}`;
+    }
+
     // Update policy preview
     function updatePolicyPreview() {
         const formData = new FormData(form);
         const policySections = [];
         let documentationProcessed = false;
+        let useCasesProcessed = false;
 
         // Process each question and its answer
         for (let [name, value] of formData.entries()) {
@@ -190,7 +248,20 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     }
                     documentationProcessed = true;
-                } else if (name !== 'documentation') {
+                } else if (name === 'useCases' && !useCasesProcessed) {
+                    const selectedOptions = Array.from(document.querySelectorAll('input[name="useCases"]:checked'));
+                    if (selectedOptions.length > 0) {
+                        const text = getUseCasesText();
+                        if (text) {
+                            policySections.push({
+                                text: text,
+                                icon: 'fas fa-check-circle',
+                                isDocumentation: true
+                            });
+                        }
+                    }
+                    useCasesProcessed = true;
+                } else if (name !== 'documentation' && name !== 'useCases') {
                     const selectedOption = questionContainer.querySelector(`input[name="${name}"]:checked`);
                     if (selectedOption) {
                         const cardContent = selectedOption.closest('.option-card').querySelector('.card-content');
@@ -257,6 +328,8 @@ document.addEventListener('DOMContentLoaded', function() {
             toggleOtherCitationFormat();
         } else if (e.target.name === 'documentation') {
             toggleOtherDocumentation();
+        } else if (e.target.name === 'useCases') {
+            toggleOtherUseCases();
         }
         updatePolicyPreview();
     });
@@ -267,8 +340,10 @@ document.addEventListener('DOMContentLoaded', function() {
         citationFormatContainer.classList.add('hidden');
         otherCitationFormat.classList.add('hidden');
         otherDocumentationContainer.classList.add('hidden');
+        document.getElementById('otherUseCasesContainer').classList.add('hidden');
         document.getElementById('question3').classList.remove('hidden');
         document.getElementById('question4').classList.remove('hidden');
+        document.getElementById('question5').classList.remove('hidden');
         updatePolicyScope();
         toggleCitationFormat();
         handleConditionalQuestions();
@@ -409,6 +484,7 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleCitationFormat();
     toggleOtherCitationFormat();
     toggleOtherDocumentation();
+    toggleOtherUseCases();
     updatePolicyPreview();
 
     // Update iframe height on window resize
