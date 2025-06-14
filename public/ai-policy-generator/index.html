@@ -65,11 +65,89 @@
                                 <input type="radio" name="aiUsage" value="encouraged">
                                 <div class="card-content">
                                     <i class="fas fa-lightbulb" aria-hidden="true"></i>
-                                    <h3>Encouraged</h3>
-                                    <p class="course-text">You are encouraged to use AI tools as learning aids and to help with your work.</p>
-                                    <p class="assignment-text hidden">You are encouraged to use AI tools as learning aids for this assignment.</p>
+                                    <h3>Allowed</h3>
+                                    <p class="course-text">You may use AI tools at any stage of your work from initial ideas to final polish.</p>
+                                    <p class="assignment-text hidden">You may use AI tools at any stage of your work from initial ideas to final polish.</p>
                                 </div>
                             </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 2.5: Allowed AI Use Cases -->
+                    <div class="question-container hidden" id="question2_5" data-question="allowedUses">
+                        <h2 class="course-text">Which parts of the creation process are students allowed to use AI tools?</h2>
+                        <h2 class="assignment-text hidden">Which parts of the creation process are students allowed to use AI tools?</h2>
+                        <div class="options-grid documentation-options">
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="allowedUses" value="brainstorming">
+                                <div class="card-content">
+                                    <i class="fas fa-lightbulb" aria-hidden="true"></i>
+                                    <h3>Brainstorming</h3>
+                                    <p>Allowed for brainstorming ideas and initial concepts</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="allowedUses" value="research">
+                                <div class="card-content">
+                                    <i class="fas fa-book" aria-hidden="true"></i>
+                                    <h3>Research & Summarization</h3>
+                                    <p>Allowed for research and summarization of sources</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="allowedUses" value="outline">
+                                <div class="card-content">
+                                    <i class="fas fa-sitemap" aria-hidden="true"></i>
+                                    <h3>Outline & Thesis</h3>
+                                    <p>Allowed for generating an outline or thesis statement</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="allowedUses" value="content">
+                                <div class="card-content">
+                                    <i class="fas fa-pen-fancy" aria-hidden="true"></i>
+                                    <h3>Content Generation</h3>
+                                    <p>Allowed for generating initial content or drafts</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="allowedUses" value="critique">
+                                <div class="card-content">
+                                    <i class="fas fa-comments" aria-hidden="true"></i>
+                                    <h3>Critique & Peer Review</h3>
+                                    <p>Allowed for critique and simulated peer review of your work</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="allowedUses" value="formatting">
+                                <div class="card-content">
+                                    <i class="fas fa-paint-brush" aria-hidden="true"></i>
+                                    <h3>Formatting & Style</h3>
+                                    <p>Allowed for formatting and style improvements</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="allowedUses" value="multimedia">
+                                <div class="card-content">
+                                    <i class="fas fa-images" aria-hidden="true"></i>
+                                    <h3>Images & Multimedia</h3>
+                                    <p>Allowed for generating accompanying images or multimedia</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="allowedUses" value="other">
+                                <div class="card-content">
+                                    <i class="fas fa-plus-circle" aria-hidden="true"></i>
+                                    <h3>Other Use</h3>
+                                    <p>Additional allowed uses (specify below)</p>
+                                </div>
+                            </label>
+                            <div id="otherAllowedUsesContainer" class="other-documentation-container hidden">
+                                <div class="other-documentation-input">
+                                    <label for="customAllowedUses">Specify additional allowed uses:</label>
+                                    <textarea id="customAllowedUses" name="customAllowedUses" placeholder="Enter additional ways students may use AI tools" rows="3"></textarea>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -131,6 +209,23 @@
                                     <p class="assignment-text hidden">You must provide formal citations for AI-generated content in this assignment.</p>
                                 </div>
                             </label>
+                            <div id="citationStyleContainer" class="other-documentation-container hidden">
+                                <div class="other-documentation-input">
+                                    <label for="citationStyle">Select citation style:</label>
+                                    <select id="citationStyle" name="citationStyle" class="citation-style-select">
+                                        <option value="">Select a style...</option>
+                                        <option value="APA">APA (American Psychological Association)</option>
+                                        <option value="MLA">MLA (Modern Language Association)</option>
+                                        <option value="Chicago">Chicago Manual of Style</option>
+                                        <option value="Turabian">Turabian</option>
+                                        <option value="other">Other (specify below)</option>
+                                    </select>
+                                    <div id="otherCitationStyleContainer" class="other-documentation-container hidden">
+                                        <label for="customCitationStyle">Specify citation style:</label>
+                                        <textarea id="customCitationStyle" name="customCitationStyle" placeholder="Enter your preferred citation style" rows="2"></textarea>
+                                    </div>
+                                </div>
+                            </div>
                             <label class="option-card checkbox-card">
                                 <input type="checkbox" name="documentation" value="reflection">
                                 <div class="card-content">
@@ -140,6 +235,12 @@
                                     <p class="assignment-text hidden">You must include a reflection on your AI usage and learning process for this assignment.</p>
                                 </div>
                             </label>
+                            <div id="reflectionDirectionsContainer" class="other-documentation-container hidden">
+                                <div class="other-documentation-input">
+                                    <label for="customReflectionDirections">Specify reflection requirements:</label>
+                                    <textarea id="customReflectionDirections" name="customReflectionDirections" placeholder="Enter specific reflection requirements or prompts" rows="3"></textarea>
+                                </div>
+                            </div>
                             <label class="option-card checkbox-card">
                                 <input type="checkbox" name="documentation" value="factcheck">
                                 <div class="card-content">
