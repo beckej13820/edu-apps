@@ -34,9 +34,9 @@ document.addEventListener('DOMContentLoaded', function() {
             d: Array.from(formData.getAll('documentation')), // d for documentation
             
             // Custom text inputs
-            cu: document.getElementById('customUseCases').value,        // cu for custom use cases
-            cd: document.getElementById('customDocumentation').value,   // cd for custom documentation
-            cf: document.getElementById('customCitationFormat').value   // cf for custom citation format
+            cu: document.getElementById('customUseCases')?.value || '',        // cu for custom use cases
+            cd: document.getElementById('customDocumentation')?.value || '',   // cd for custom documentation
+            cf: document.getElementById('customCitationFormat')?.value || ''   // cf for custom citation format
         };
         
         // Convert to base64 to make it more compact
@@ -48,9 +48,18 @@ document.addEventListener('DOMContentLoaded', function() {
             const state = JSON.parse(atob(encodedState));
             
             // Set radio buttons
-            if (state.s) document.querySelector(`input[name="policyScope"][value="${state.s}"]`).checked = true;
-            if (state.a) document.querySelector(`input[name="aiUsage"][value="${state.a}"]`).checked = true;
-            if (state.c) document.querySelector(`input[name="citation"][value="${state.c}"]`).checked = true;
+            if (state.s) {
+                const radio = document.querySelector(`input[name="policyScope"][value="${state.s}"]`);
+                if (radio) radio.checked = true;
+            }
+            if (state.a) {
+                const radio = document.querySelector(`input[name="aiUsage"][value="${state.a}"]`);
+                if (radio) radio.checked = true;
+            }
+            if (state.c) {
+                const radio = document.querySelector(`input[name="citation"][value="${state.c}"]`);
+                if (radio) radio.checked = true;
+            }
             
             // Set checkboxes
             if (state.u) {
@@ -67,9 +76,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Set custom text inputs
-            if (state.cu) document.getElementById('customUseCases').value = state.cu;
-            if (state.cd) document.getElementById('customDocumentation').value = state.cd;
-            if (state.cf) document.getElementById('customCitationFormat').value = state.cf;
+            const customUseCases = document.getElementById('customUseCases');
+            const customDocumentation = document.getElementById('customDocumentation');
+            const customCitationFormat = document.getElementById('customCitationFormat');
+            
+            if (state.cu && customUseCases) customUseCases.value = state.cu;
+            if (state.cd && customDocumentation) customDocumentation.value = state.cd;
+            if (state.cf && customCitationFormat) customCitationFormat.value = state.cf;
             
             // Update the form display
             updatePolicyScope();
@@ -499,9 +512,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update URL when custom text inputs change
     ['customUseCases', 'customDocumentation', 'customCitationFormat'].forEach(id => {
-        document.getElementById(id).addEventListener('input', function() {
-            updateURL();
-        });
+        const element = document.getElementById(id);
+        if (element) {
+            element.addEventListener('input', function() {
+                updateURL();
+            });
+        }
     });
 
     // Handle citation requirements
@@ -596,16 +612,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Share button
     const shareBtn = document.getElementById('shareBtn');
-    shareBtn.addEventListener('click', function() {
-        const currentURL = window.location.href;
-        navigator.clipboard.writeText(currentURL).then(() => {
-            const originalHTML = shareBtn.innerHTML;
-            shareBtn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i> Copied!';
-            setTimeout(() => {
-                shareBtn.innerHTML = originalHTML;
-            }, 2000);
+    if (shareBtn) {
+        shareBtn.addEventListener('click', function() {
+            const currentURL = window.location.href;
+            navigator.clipboard.writeText(currentURL).then(() => {
+                const originalHTML = shareBtn.innerHTML;
+                shareBtn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i> Copied!';
+                setTimeout(() => {
+                    shareBtn.innerHTML = originalHTML;
+                }, 2000);
+            }).catch(err => {
+                console.error('Error copying to clipboard:', err);
+            });
         });
-    });
+    }
 
     // Download RTF button
     downloadRTFBtn.addEventListener('click', function() {
