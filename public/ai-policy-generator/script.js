@@ -85,17 +85,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateURL() {
-        const encodedState = encodeFormState();
-        const newURL = new URL(window.location.href);
-        newURL.searchParams.set('policy', encodedState);
-        window.history.replaceState({}, '', newURL);
+        try {
+            const encodedState = encodeFormState();
+            const newURL = new URL(window.location.href);
+            newURL.searchParams.set('policy', encodedState);
+            window.history.replaceState({}, '', newURL);
+        } catch (e) {
+            console.error('Error updating URL:', e);
+        }
     }
 
     function initializeFromURL() {
-        const params = new URLSearchParams(window.location.search);
-        const encodedState = params.get('policy');
-        if (encodedState) {
-            decodeFormState(encodedState);
+        try {
+            const params = new URLSearchParams(window.location.search);
+            const encodedState = params.get('policy');
+            if (encodedState) {
+                decodeFormState(encodedState);
+            }
+        } catch (e) {
+            console.error('Error initializing from URL:', e);
         }
     }
 
@@ -625,6 +633,17 @@ document.addEventListener('DOMContentLoaded', function() {
 \\pard\\tx566\\tx1133\\tx1700\\tx2267\\tx2834\\tx3401\\tx3968\\tx4535\\tx5102\\tx5669\\tx6236\\tx6803\\pardirnatural\\partightenfactor0
 
 \\f0\\fs24 ${policyText.replace(/\n/g, '\\par ')}
-}`
+}`;
+        
+        // Create a blob and download link
+        const blob = new Blob([rtfContent], { type: 'application/rtf' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'ai-policy.rtf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     });
 });
