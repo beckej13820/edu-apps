@@ -235,6 +235,12 @@ document.addEventListener('DOMContentLoaded', function() {
             useCasesQuestion.classList.add('hidden');
             citationQuestion.classList.add('hidden');
             documentationQuestion.classList.add('hidden');
+            
+            // Uncheck both disclosure radio buttons when AI is prohibited
+            const disclosureRadios = document.querySelectorAll('input[name="citation"]');
+            disclosureRadios.forEach(radio => {
+                radio.checked = false;
+            });
         } else if (aiUsage.value === 'encouraged') {
             // Hide use cases when AI is allowed (all uses are approved)
             useCasesQuestion.classList.add('hidden');
