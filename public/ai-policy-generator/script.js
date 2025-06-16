@@ -20,6 +20,88 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check if we're in an iframe
     const isInIframe = window.self !== window.top;
 
+    // URL Parameter Handling
+    function encodeFormState() {
+        const formData = new FormData(form);
+        const state = {
+            // Radio buttons (single values)
+            s: formData.get('policyScope'), // s for scope
+            a: formData.get('aiUsage'),     // a for ai usage
+            c: formData.get('citation'),    // c for citation
+            
+            // Checkboxes (arrays of values)
+            u: Array.from(formData.getAll('useCases')),      // u for use cases
+            d: Array.from(formData.getAll('documentation')), // d for documentation
+            
+            // Custom text inputs
+            cu: document.getElementById('customUseCases').value,        // cu for custom use cases
+            cd: document.getElementById('customDocumentation').value,   // cd for custom documentation
+            cf: document.getElementById('customCitationFormat').value   // cf for custom citation format
+        };
+        
+        // Convert to base64 to make it more compact
+        return btoa(JSON.stringify(state));
+    }
+
+    function decodeFormState(encodedState) {
+        try {
+            const state = JSON.parse(atob(encodedState));
+            
+            // Set radio buttons
+            if (state.s) document.querySelector(`input[name="policyScope"][value="${state.s}"]`).checked = true;
+            if (state.a) document.querySelector(`input[name="aiUsage"][value="${state.a}"]`).checked = true;
+            if (state.c) document.querySelector(`input[name="citation"][value="${state.c}"]`).checked = true;
+            
+            // Set checkboxes
+            if (state.u) {
+                state.u.forEach(value => {
+                    const checkbox = document.querySelector(`input[name="useCases"][value="${value}"]`);
+                    if (checkbox) checkbox.checked = true;
+                });
+            }
+            if (state.d) {
+                state.d.forEach(value => {
+                    const checkbox = document.querySelector(`input[name="documentation"][value="${value}"]`);
+                    if (checkbox) checkbox.checked = true;
+                });
+            }
+            
+            // Set custom text inputs
+            if (state.cu) document.getElementById('customUseCases').value = state.cu;
+            if (state.cd) document.getElementById('customDocumentation').value = state.cd;
+            if (state.cf) document.getElementById('customCitationFormat').value = state.cf;
+            
+            // Update the form display
+            updatePolicyScope();
+            toggleCitationFormat();
+            toggleOtherCitationFormat();
+            toggleOtherDocumentation();
+            toggleOtherUseCases();
+            updatePolicyPreview();
+        } catch (e) {
+            // Silently ignore invalid parameters
+            console.debug('Invalid URL parameters:', e);
+        }
+    }
+
+    function updateURL() {
+        const encodedState = encodeFormState();
+        const newURL = new URL(window.location.href);
+        newURL.searchParams.set('policy', encodedState);
+        window.history.replaceState({}, '', newURL);
+    }
+
+    function initializeFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        const encodedState = params.get('policy');
+        if (encodedState) {
+            decodeFormState(encodedState);
+        }
+    }
+
+    // Initialize from URL parameters
+    initializeFromURL();
+
     // Function to send height updates to parent window
     function updateIframeHeight() {
         if (isInIframe) {
@@ -404,6 +486,14 @@ document.addEventListener('DOMContentLoaded', function() {
             toggleOtherUseCases();
         }
         updatePolicyPreview();
+        updateURL(); // Update URL when form changes
+    });
+
+    // Update URL when custom text inputs change
+    ['customUseCases', 'customDocumentation', 'customCitationFormat'].forEach(id => {
+        document.getElementById(id).addEventListener('input', function() {
+            updateURL();
+        });
     });
 
     // Handle citation requirements
@@ -426,6 +516,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Force immediate preview update
             updatePolicyPreview();
+            updateURL(); // Update URL when citation changes
         });
     });
 
@@ -460,6 +551,11 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             previewContainer.innerHTML = '<p>Select options to generate your policy statement.</p>';
         }, 0);
+
+        // Clear URL parameters
+        const newURL = new URL(window.location.href);
+        newURL.searchParams.delete('policy');
+        window.history.replaceState({}, '', newURL);
     });
 
     // Copy button
@@ -486,6 +582,19 @@ document.addEventListener('DOMContentLoaded', function() {
             copyBtn.textContent = 'Copied!';
             setTimeout(() => {
                 copyBtn.textContent = originalText;
+            }, 2000);
+        });
+    });
+
+    // Share button
+    const shareBtn = document.getElementById('shareBtn');
+    shareBtn.addEventListener('click', function() {
+        const currentURL = window.location.href;
+        navigator.clipboard.writeText(currentURL).then(() => {
+            const originalHTML = shareBtn.innerHTML;
+            shareBtn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i> Copied!';
+            setTimeout(() => {
+                shareBtn.innerHTML = originalHTML;
             }, 2000);
         });
     });
