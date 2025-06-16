@@ -114,6 +114,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const encodedState = params.get('policy');
             if (encodedState) {
                 decodeFormState(encodedState);
+                // Force an immediate preview update after loading parameters
+                setTimeout(() => {
+                    updatePolicyPreview();
+                    updateIframeHeight();
+                }, 0);
             }
         } catch (e) {
             console.error('Error initializing from URL:', e);
@@ -264,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectedOptions = Array.from(document.querySelectorAll('input[name="documentation"]:checked'))
             .map(checkbox => {
                 if (checkbox.value === 'other') {
-                    const customText = document.getElementById('customDocumentation').value.trim();
+                    const customText = document.getElementById('customDocumentation')?.value?.trim() || '';
                     return {
                         text: customText,
                         icon: 'fas fa-plus-circle'
@@ -299,7 +304,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectedOptions = Array.from(document.querySelectorAll('input[name="useCases"]:checked'))
             .map(checkbox => {
                 if (checkbox.value === 'other') {
-                    const customText = document.getElementById('customUseCases').value.trim();
+                    const customText = document.getElementById('customUseCases')?.value?.trim() || '';
                     return {
                         text: customText,
                         icon: 'fas fa-plus-circle'
