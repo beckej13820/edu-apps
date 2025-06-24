@@ -6,7 +6,6 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://cdnjs.cloudflare.com; style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'; script-src 'self' 'unsafe-inline';">
     <title>AI Policy Statement Generator</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         .skip-link {
             position: absolute;
@@ -59,6 +58,12 @@
             outline-offset: 2px;
             box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.25);
         }
+
+        .icon {
+            font-size: 1.5em;
+            vertical-align: middle;
+            margin-right: 0.5em;
+        }
     </style>
 </head>
 <body>
@@ -77,7 +82,7 @@
                             <label class="option-card">
                                 <input type="radio" name="policyScope" value="course" required aria-describedby="course-desc">
                                 <div class="card-content">
-                                    <i class="fas fa-book" aria-hidden="true"></i>
+                                    <span aria-hidden="true" class="icon">📚</span>
                                     <h3>Entire Course</h3>
                                     <p id="course-desc">This policy will apply to all assignments and activities throughout the course.</p>
                                 </div>
@@ -85,7 +90,7 @@
                             <label class="option-card">
                                 <input type="radio" name="policyScope" value="assignment" aria-describedby="assignment-desc">
                                 <div class="card-content">
-                                    <i class="fas fa-tasks" aria-hidden="true"></i>
+                                    <span aria-hidden="true" class="icon">🗂️</span>
                                     <h3>Specific Assignment</h3>
                                     <p id="assignment-desc">This policy will apply only to a specific assignment or activity.</p>
                                 </div>
@@ -101,7 +106,7 @@
                             <label class="option-card">
                                 <input type="radio" name="aiUsage" value="prohibited" required aria-describedby="prohibited-desc">
                                 <div class="card-content">
-                                    <i class="fas fa-ban" aria-hidden="true"></i>
+                                    <span aria-hidden="true" class="icon">🚫</span>
                                     <h3>Prohibited</h3>
                                     <p id="prohibited-desc" class="course-text">You may not use AI tools for any assignments or activities in this course.</p>
                                     <p class="assignment-text hidden">You may not use AI tools for this assignment.</p>
@@ -110,7 +115,7 @@
                             <label class="option-card">
                                 <input type="radio" name="aiUsage" value="limited" aria-describedby="limited-desc">
                                 <div class="card-content">
-                                    <i class="fas fa-hand-paper" aria-hidden="true"></i>
+                                    <span aria-hidden="true" class="icon">✋</span>
                                     <h3>Limited Use</h3>
                                     <p id="limited-desc" class="course-text">You may use AI tools only for assignments where I have given you specific permission.</p>
                                     <p class="assignment-text hidden">You may use AI tools only for parts of this assignment where I have given you specific permission.</p>
@@ -119,7 +124,7 @@
                             <label class="option-card">
                                 <input type="radio" name="aiUsage" value="encouraged" aria-describedby="encouraged-desc">
                                 <div class="card-content">
-                                    <i class="fas fa-lightbulb" aria-hidden="true"></i>
+                                    <span aria-hidden="true" class="icon">💡</span>
                                     <h3>Allowed</h3>
                                     <p id="encouraged-desc" class="course-text">You may use AI tools in any part of completing this course.</p>
                                     <p class="assignment-text hidden">You may use AI tools in any part of completing this assignment.</p>
@@ -136,7 +141,7 @@
                             <label class="option-card checkbox-card">
                                 <input type="checkbox" name="useCases" value="brainstorming" aria-describedby="brainstorming-desc">
                                 <div class="card-content">
-                                    <i class="fas fa-lightbulb" aria-hidden="true"></i>
+                                    <span aria-hidden="true" class="icon">💡</span>
                                     <h3>Brainstorming</h3>
                                     <p id="brainstorming-desc" class="course-text">Allowed for brainstorming ideas and initial concepts.</p>
                                     <p class="assignment-text hidden">Allowed for brainstorming ideas and initial concepts for this assignment.</p>
@@ -145,7 +150,7 @@
                             <label class="option-card checkbox-card">
                                 <input type="checkbox" name="useCases" value="research" aria-describedby="research-desc">
                                 <div class="card-content">
-                                    <i class="fas fa-search" aria-hidden="true"></i>
+                                    <span aria-hidden="true" class="icon">🔍</span>
                                     <h3>Research and Summarization</h3>
                                     <p id="research-desc" class="course-text">Allowed for research and summarization of sources.</p>
                                     <p class="assignment-text hidden">Allowed for research and summarization of sources for this assignment.</p>
@@ -154,7 +159,7 @@
                             <label class="option-card checkbox-card">
                                 <input type="checkbox" name="useCases" value="outline" aria-describedby="outline-desc">
                                 <div class="card-content">
-                                    <i class="fas fa-sitemap" aria-hidden="true"></i>
+                                    <span aria-hidden="true" class="icon">🗒️</span>
                                     <h3>Outline and Thesis</h3>
                                     <p id="outline-desc" class="course-text">Allowed for generating an outline or thesis statement.</p>
                                     <p class="assignment-text hidden">Allowed for generating an outline or thesis statement for this assignment.</p>
@@ -163,7 +168,7 @@
                             <label class="option-card checkbox-card">
                                 <input type="checkbox" name="useCases" value="content" aria-describedby="content-desc">
                                 <div class="card-content">
-                                    <i class="fas fa-pen-fancy" aria-hidden="true"></i>
+                                    <span aria-hidden="true" class="icon">📝</span>
                                     <h3>Content Generation</h3>
                                     <p id="content-desc" class="course-text">Allowed for generating content or drafts.</p>
                                     <p class="assignment-text hidden">Allowed for generating content or drafts for this assignment.</p>
@@ -172,7 +177,7 @@
                             <label class="option-card checkbox-card">
                                 <input type="checkbox" name="useCases" value="critique" aria-describedby="critique-desc">
                                 <div class="card-content">
-                                    <i class="fas fa-comments" aria-hidden="true"></i>
+                                    <span aria-hidden="true" class="icon">🗨️</span>
                                     <h3>Critique and Peer Review</h3>
                                     <p id="critique-desc" class="course-text">Allowed for critique and simulated peer review of your work.</p>
                                     <p class="assignment-text hidden">Allowed for critique and simulated peer review of your work for this assignment.</p>
@@ -181,7 +186,7 @@
                             <label class="option-card checkbox-card">
                                 <input type="checkbox" name="useCases" value="analysis" aria-describedby="analysis-desc">
                                 <div class="card-content">
-                                    <i class="fas fa-chart-bar" aria-hidden="true"></i>
+                                    <span aria-hidden="true" class="icon">📊</span>
                                     <h3>Data Analysis</h3>
                                     <p id="analysis-desc" class="course-text">Allowed to help analyze data and generate insights.</p>
                                     <p class="assignment-text hidden">Allowed to help analyze data and generate insights for this assignment.</p>
@@ -190,7 +195,7 @@
                             <label class="option-card checkbox-card">
                                 <input type="checkbox" name="useCases" value="other" aria-describedby="other-use-desc">
                                 <div class="card-content">
-                                    <i class="fas fa-plus-circle" aria-hidden="true"></i>
+                                    <span aria-hidden="true" class="icon">➕</span>
                                     <h3>Other Use Cases</h3>
                                     <p id="other-use-desc" class="course-text">Additional approved use cases (specify below).</p>
                                     <p class="assignment-text hidden">Additional approved use cases (specify below).</p>
@@ -213,7 +218,7 @@
                             <label class="option-card">
                                 <input type="radio" name="citation" value="required" required aria-describedby="required-desc">
                                 <div class="card-content">
-                                    <i class="fas fa-check-circle" aria-hidden="true"></i>
+                                    <span aria-hidden="true" class="icon">✔️</span>
                                     <h3>AI Use Must Be Disclosed</h3>
                                     <p id="required-desc" class="course-text">You must acknowledge your use of AI tools in this course.</p>
                                     <p class="assignment-text hidden">You must acknowledge your use of AI tools for this assignment.</p>
@@ -222,7 +227,7 @@
                             <label class="option-card">
                                 <input type="radio" name="citation" value="none" aria-describedby="none-desc">
                                 <div class="card-content">
-                                    <i class="fas fa-times-circle" aria-hidden="true"></i>
+                                    <span aria-hidden="true" class="icon">❌</span>
                                     <h3>No Disclosure Required</h3>
                                     <p id="none-desc" class="course-text">You are not required to acknowledge your use of AI tools.</p>
                                     <p class="assignment-text hidden">You are not required to acknowledge your use of AI tools for this assignment.</p>
@@ -239,7 +244,7 @@
                             <label class="option-card checkbox-card">
                                 <input type="checkbox" name="documentation" value="tools" aria-describedby="tools-desc">
                                 <div class="card-content">
-                                    <i class="fas fa-tools" aria-hidden="true"></i>
+                                    <span aria-hidden="true" class="icon">🛠️</span>
                                     <h3>Document Platforms</h3>
                                     <p id="tools-desc" class="course-text">You must document which AI platforms and tools you used.</p>
                                     <p class="assignment-text hidden">You must document which AI platforms and tools you used for this assignment.</p>
@@ -248,7 +253,7 @@
                             <label class="option-card checkbox-card">
                                 <input type="checkbox" name="documentation" value="prompts" aria-describedby="prompts-desc">
                                 <div class="card-content">
-                                    <i class="fas fa-file-export" aria-hidden="true"></i>
+                                    <span aria-hidden="true" class="icon">📤</span>
                                     <h3>Submit Prompts & Outputs</h3>
                                     <p id="prompts-desc" class="course-text">You must include your prompts and AI outputs with your assignment submission.</p>
                                     <p class="assignment-text hidden">You must include your prompts and AI outputs with this assignment submission.</p>
@@ -257,7 +262,7 @@
                             <label class="option-card checkbox-card">
                                 <input type="checkbox" name="documentation" value="citation" aria-describedby="citation-desc">
                                 <div class="card-content">
-                                    <i class="fas fa-file-signature" aria-hidden="true"></i>
+                                    <span aria-hidden="true" class="icon">🧾</span>
                                     <h3>Formal Citation Required</h3>
                                     <p id="citation-desc" class="course-text">You must provide formal citations for AI-generated content.</p>
                                     <p class="assignment-text hidden">You must provide formal citations for AI-generated content in this assignment.</p>
@@ -266,7 +271,7 @@
                             <label class="option-card checkbox-card">
                                 <input type="checkbox" name="documentation" value="reflection" aria-describedby="reflection-desc">
                                 <div class="card-content">
-                                    <i class="fas fa-brain" aria-hidden="true"></i>
+                                    <span aria-hidden="true" class="icon">🧠</span>
                                     <h3>Additional Reflection</h3>
                                     <p id="reflection-desc" class="course-text">You must include a reflection on your AI usage and learning process.</p>
                                     <p class="assignment-text hidden">You must include a reflection on your AI usage and learning process for this assignment.</p>
@@ -275,7 +280,7 @@
                             <label class="option-card checkbox-card">
                                 <input type="checkbox" name="documentation" value="factcheck" aria-describedby="factcheck-desc">
                                 <div class="card-content">
-                                    <i class="fas fa-check-double" aria-hidden="true"></i>
+                                    <span aria-hidden="true" class="icon">🔎</span>
                                     <h3>Fact Check</h3>
                                     <p id="factcheck-desc" class="course-text">You must verify AI-generated information against trusted sources and document your fact-checking process.</p>
                                     <p class="assignment-text hidden">You must verify AI-generated information against trusted sources and document your fact-checking process for this assignment.</p>
@@ -284,7 +289,7 @@
                             <label class="option-card checkbox-card">
                                 <input type="checkbox" name="documentation" value="multitools" aria-describedby="multitools-desc">
                                 <div class="card-content">
-                                    <i class="fas fa-code-compare" aria-hidden="true"></i>
+                                    <span aria-hidden="true" class="icon">🔄</span>
                                     <h3>Compare Multiple Tools</h3>
                                     <p id="multitools-desc" class="course-text">You must compare results from multiple AI tools and analyze the differences.</p>
                                     <p class="assignment-text hidden">You must compare results from multiple AI tools and analyze the differences for this assignment.</p>
@@ -293,7 +298,7 @@
                             <label class="option-card checkbox-card">
                                 <input type="checkbox" name="documentation" value="other" aria-describedby="other-desc">
                                 <div class="card-content">
-                                    <i class="fas fa-plus-circle" aria-hidden="true"></i>
+                                    <span aria-hidden="true" class="icon">➕</span>
                                     <h3>Other Requirements</h3>
                                     <p id="other-desc" class="course-text">Additional documentation or assignment requirements (specify below).</p>
                                     <p class="assignment-text hidden">Additional documentation or assignment requirements (specify below).</p>
@@ -322,7 +327,7 @@
                         <button type="button" id="downloadRTF" class="btn" aria-label="Download policy as RTF file">Download RTF</button>
                         <button type="button" id="copyBtn" class="btn" aria-label="Copy policy HTML to clipboard">Copy HTML</button>
                         <button type="button" id="shareBtn" class="btn" aria-label="Share policy configuration">
-                            <i class="fas fa-share-alt" aria-hidden="true"></i> Share
+                            <span aria-hidden="true" class="icon">🔗</span> Share
                         </button>
                     </div>
                 </div>
@@ -332,11 +337,11 @@
         <footer class="app-footer">
             <div class="footer-content">
                 <div class="acknowledgement">
-                    <p>The AI Policy Generator was created by Ed Beck and Tera Doty-Blance and has been shared under a <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Creative Commons Attribution 4.0 International License <i class="fab fa-creative-commons" aria-hidden="true"></i> <i class="fab fa-creative-commons-by" aria-hidden="true"></i></a>.</p>
-                    <p>Source code is available on <a href="https://github.com/beckej13820/edu-apps" target="_blank" rel="noopener noreferrer">GitHub <i class="fab fa-github" aria-hidden="true"></i></a></p>
+                    <p>The AI Policy Generator was created by Ed Beck and Tera Doty-Blance and has been shared under a <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Creative Commons Attribution 4.0 International License <span class="icon" aria-hidden="true">🄯</span> <span class="icon" aria-hidden="true">👤</span></a>.</p>
+                    <p>Source code is available on <a href="https://github.com/beckej13820/edu-apps" target="_blank" rel="noopener noreferrer">GitHub <span class="icon" aria-hidden="true">🐙</span></a></p>
                 </div>
                 <button id="embedBtn" class="btn btn-secondary" aria-label="Open embed code modal">
-                    <i class="fas fa-code" aria-hidden="true"></i> Embed
+                    <span class="icon" aria-hidden="true">💻</span> Embed
                 </button>
             </div>
         </footer>
@@ -348,7 +353,7 @@
             <div class="modal-header">
                 <h2 id="modal-title">Embed AI Policy Generator</h2>
                 <button class="close-modal" aria-label="Close modal">
-                    <i class="fas fa-times" aria-hidden="true"></i>
+                    <span class="icon" aria-hidden="true">❎</span>
                 </button>
             </div>
             <div class="modal-body">
@@ -356,7 +361,7 @@
                 <div class="code-container">
                     <pre><code id="embedCode"></code></pre>
                     <button id="copyEmbedBtn" class="btn" aria-label="Copy embed code to clipboard">
-                        <i class="fas fa-copy" aria-hidden="true"></i> Copy Code
+                        <span class="icon" aria-hidden="true">📋</span> Copy Code
                     </button>
                 </div>
                 <div class="embed-preview">
@@ -377,4 +382,4 @@
 
     <script src="script.js"></script>
 </body>
-</html> 
+</html>
