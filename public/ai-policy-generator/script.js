@@ -278,13 +278,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     const customText = document.getElementById('customDocumentation')?.value?.trim() || '';
                     return {
                         text: customText,
-                        icon: 'fas fa-plus-circle'
+                        iconHTML: '<span class="icon" aria-hidden="true">➕</span>'
                     };
                 }
                 const cardContent = checkbox.closest('.option-card').querySelector('.card-content');
+                const iconSpan = cardContent.querySelector('.icon');
                 return {
                     text: cardContent.querySelector('p:not(.hidden)').textContent,
-                    icon: cardContent.querySelector('i').className
+                    iconHTML: iconSpan ? iconSpan.outerHTML : ''
                 };
             })
             .filter(item => item.text);
@@ -296,10 +297,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const header = `If you use AI ${context}, you must also:`;
         const requirements = selectedOptions.map(item => 
-            `<div class="requirement-item">
-                <i class="${item.icon}"></i>
-                <span>${item.text}</span>
-            </div>`
+            `<div class="requirement-item">${item.iconHTML}<span>${item.text}</span></div>`
         ).join('');
 
         return `${header}\n${requirements}`;
@@ -313,13 +311,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     const customText = document.getElementById('customUseCases')?.value?.trim() || '';
                     return {
                         text: customText,
-                        icon: 'fas fa-plus-circle'
+                        iconHTML: '<span class="icon" aria-hidden="true">➕</span>'
                     };
                 }
                 const cardContent = checkbox.closest('.option-card').querySelector('.card-content');
+                const iconSpan = cardContent.querySelector('.icon');
                 return {
                     text: cardContent.querySelector('p:not(.hidden)').textContent,
-                    icon: cardContent.querySelector('i').className
+                    iconHTML: iconSpan ? iconSpan.outerHTML : ''
                 };
             })
             .filter(item => item.text);
@@ -331,10 +330,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const header = `Approved use cases for AI tools ${context}:`;
         const requirements = selectedOptions.map(item => 
-            `<div class="requirement-item">
-                <i class="${item.icon}"></i>
-                <span>${item.text}</span>
-            </div>`
+            `<div class="requirement-item">${item.iconHTML}<span>${item.text}</span></div>`
         ).join('');
 
         return `${header}\n${requirements}`;
@@ -384,7 +380,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Add header as first section
             policySections.push({
                 text: header,
-                icon: 'fas fa-info-circle',
+                iconHTML: '<span class="icon" aria-hidden="true">ℹ️</span>',
                 isHeader: true
             });
         }
@@ -409,7 +405,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (text) {
                             policySections.push({
                                 text: text,
-                                icon: 'fas fa-tasks',
+                                iconHTML: '<span class="icon" aria-hidden="true">🗂️</span>',
                                 isDocumentation: true
                             });
                         }
@@ -422,7 +418,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (text) {
                             policySections.push({
                                 text: text,
-                                icon: 'fas fa-check-circle',
+                                iconHTML: '<span class="icon" aria-hidden="true">✔️</span>',
                                 isDocumentation: true
                             });
                         }
@@ -432,19 +428,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     const selectedOption = questionContainer.querySelector(`input[name="${name}"]:checked`);
                     if (selectedOption && selectedOption.value === 'required') {
                         const cardContent = selectedOption.closest('.option-card').querySelector('.card-content');
-                        const icon = cardContent.querySelector('i').className;
+                        const iconSpan = cardContent.querySelector('.icon');
                         const answer = cardContent.querySelector('p:not(.hidden)').textContent;
                         
                         policySections.push({
                             text: answer,
-                            icon
+                            iconHTML: iconSpan ? iconSpan.outerHTML : ''
                         });
                     }
                 } else if (name !== 'documentation' && name !== 'useCases') {
                     const selectedOption = questionContainer.querySelector(`input[name="${name}"]:checked`);
                     if (selectedOption) {
                         const cardContent = selectedOption.closest('.option-card').querySelector('.card-content');
-                        const icon = cardContent.querySelector('i').className;
+                        const iconSpan = cardContent.querySelector('.icon');
                         const answer = cardContent.querySelector('p:not(.hidden)').textContent;
                         
                         // Convert teacher-focused language to student-focused language
@@ -455,7 +451,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         policySections.push({
                             text: studentText,
-                            icon
+                            iconHTML: iconSpan ? iconSpan.outerHTML : ''
                         });
                     }
                 }
@@ -468,7 +464,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (section.isHeader) {
                 policyHTML += `
                     <div class="policy-header">
-                        <i class="${section.icon}"></i>
+                        ${section.iconHTML}
                         <h2>${section.text}</h2>
                     </div>
                 `;
@@ -476,7 +472,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const [header, ...requirements] = section.text.split('\n');
                 policyHTML += `
                     <div class="policy-section">
-                        <i class="${section.icon}"></i>
+                        ${section.iconHTML}
                         <div class="documentation-section">
                             <p class="documentation-header">${header}</p>
                             <div class="documentation-requirements">
@@ -488,7 +484,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 policyHTML += `
                     <div class="policy-section">
-                        <i class="${section.icon}"></i>
+                        ${section.iconHTML}
                         <p>${section.text}</p>
                     </div>
                 `;
@@ -621,60 +617,71 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Share button
-    const shareBtn = document.getElementById('shareBtn');
-    if (shareBtn) {
-        shareBtn.addEventListener('click', function() {
-            const currentURL = window.location.href;
-            navigator.clipboard.writeText(currentURL).then(() => {
-                const originalHTML = shareBtn.innerHTML;
-                shareBtn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i> Copied!';
-                setTimeout(() => {
-                    shareBtn.innerHTML = originalHTML;
-                }, 2000);
-            }).catch(err => {
-                console.error('Error copying to clipboard:', err);
-            });
-        });
-    }
-
     // Download RTF button
     downloadRTFBtn.addEventListener('click', function() {
-        const policyText = Array.from(previewContainer.querySelectorAll('.policy-section'))
-            .map(section => {
-                if (section.querySelector('.documentation-section')) {
-                    // Handle documentation and use cases sections
-                    const header = section.querySelector('.documentation-header').textContent;
-                    const requirements = Array.from(section.querySelectorAll('.requirement-item'))
-                        .map(item => item.querySelector('span').textContent)
-                        .join('\n');
-                    return `${header}\n${requirements}`;
-                } else {
-                    // Handle regular policy sections
-                    return section.querySelector('p').textContent.trim();
-                }
-            })
-            .filter(text => text) // Remove any empty sections
-            .join('\n\n');
+        // Generate the RTF content
+        let rtfContent = '{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033';
+        rtfContent += '{\\fonttbl{\\f0\\fnil\\fcharset0 Calibri;}}\n';
+        rtfContent += '{\\*\\generator Riched20 10.0.18362;}\\viewkind4\\uc1 \n';
+        rtfContent += '\\pard\\sa200\\sl276\\slmult1\\f0\\fs22\\lang9 ';
 
-        const rtfContent = `{\\rtf1\\ansi\\ansicpg1252\\cocoartf2639
-{\\fonttbl\\f0\\fswiss\\fcharset0 Helvetica;}
-{\\colortbl;\\red0\\green0\\blue0;}
-\\paperw11900\\paperh16840\\margl1440\\margr1440\\vieww11520\\viewh8400\\viewkind0
-\\pard\\tx566\\tx1133\\tx1700\\tx2267\\tx2834\\tx3401\\tx3968\\tx4535\\tx5102\\tx5669\\tx6236\\tx6803\\pardirnatural\\partightenfactor0
+        const sections = Array.from(previewContainer.querySelectorAll('.policy-section'));
+        sections.forEach((section, index) => {
+            const text = section.querySelector('p').textContent.trim();
+            const isLast = index === sections.length - 1;
+            
+            // Add RTF formatting
+            rtfContent += `${text}${isLast ? '' : '\\par\n'}`;
+        });
 
-\\f0\\fs24 ${policyText.replace(/\n/g, '\\par ')}
-}`;
-        
-        // Create a blob and download link
+        rtfContent += '}'; // Close the RTF document
+
+        // Create a blob and download it
         const blob = new Blob([rtfContent], { type: 'application/rtf' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'ai-policy.rtf';
+        a.download = 'policy_statement.rtf';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+    });
+
+    // Embed button (show modal)
+    embedBtn.addEventListener('click', function() {
+        // Generate the embed code
+        const policyText = Array.from(previewContainer.querySelectorAll('.policy-section'))
+            .map(section => {
+                const answer = section.querySelector('p').textContent.trim();
+                return answer;
+            })
+            .join('\n\n');
+        
+        const encodedPolicy = btoa(policyText);
+        const iframeHTML = `<iframe src="https://yourdomain.com/policy-viewer?policy=${encodedPolicy}" width="100%" height="600px" style="border:none;"></iframe>`;
+        embedCode.value = iframeHTML; // Set the embed code in the modal
+
+        // Show the modal
+        embedModal.classList.remove('hidden');
+        document.body.classList.add('modal-open');
+    });
+
+    // Close modal
+    closeModal.addEventListener('click', function() {
+        embedModal.classList.add('hidden');
+        document.body.classList.remove('modal-open');
+    });
+
+    // Copy embed code button
+    copyEmbedBtn.addEventListener('click', function() {
+        embedCode.select();
+        document.execCommand('copy');
+
+        const originalText = copyEmbedBtn.textContent;
+        copyEmbedBtn.textContent = 'Copied!';
+        setTimeout(() => {
+            copyEmbedBtn.textContent = originalText;
+        }, 2000);
     });
 });
