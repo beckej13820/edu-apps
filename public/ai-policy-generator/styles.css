@@ -660,3 +660,8 @@ h2 {
     margin-right: 0.5rem;
     font-size: 1.25rem;
 }
+
+.policy-list {
+    list-style: none;
+    padding-left: 0;
+}
