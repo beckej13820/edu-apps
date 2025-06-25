@@ -151,6 +151,13 @@ h2 {
     margin-bottom: 1.5rem;
 }
 
+.policy-statement .icon,
+.policy-list .icon {
+    font-size: 1.5em !important;
+    vertical-align: middle;
+    margin-right: 0.25em;
+}
+
 .policy-section {
     display: flex;
     align-items: flex-start;
@@ -652,4 +659,4 @@ h2 {
     color: #007bff;
     margin-right: 0.5rem;
     font-size: 1.25rem;
-} 
+}
