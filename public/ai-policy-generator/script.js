@@ -278,14 +278,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     const customText = document.getElementById('customDocumentation')?.value?.trim() || '';
                     return {
                         text: customText,
-                        iconHTML: '<span class="icon" aria-hidden="true">➕</span>'
+                        icon: '➕'
                     };
                 }
                 const cardContent = checkbox.closest('.option-card').querySelector('.card-content');
                 const iconSpan = cardContent.querySelector('.icon');
                 return {
                     text: cardContent.querySelector('p:not(.hidden)').textContent,
-                    iconHTML: iconSpan ? iconSpan.outerHTML : ''
+                    icon: iconSpan ? iconSpan.textContent : ''
                 };
             })
             .filter(item => item.text);
@@ -297,7 +297,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const header = `If you use AI ${context}, you must also:`;
         const requirements = selectedOptions.map(item => 
-            `<div class="requirement-item">${item.iconHTML}<span>${item.text}</span></div>`
+            `<div class="requirement-item">${item.icon} <span>${item.text}</span></div>`
         ).join('');
 
         return `${header}\n${requirements}`;
@@ -311,14 +311,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     const customText = document.getElementById('customUseCases')?.value?.trim() || '';
                     return {
                         text: customText,
-                        iconHTML: '<span class="icon" aria-hidden="true">➕</span>'
+                        icon: '➕'
                     };
                 }
                 const cardContent = checkbox.closest('.option-card').querySelector('.card-content');
                 const iconSpan = cardContent.querySelector('.icon');
                 return {
                     text: cardContent.querySelector('p:not(.hidden)').textContent,
-                    iconHTML: iconSpan ? iconSpan.outerHTML : ''
+                    icon: iconSpan ? iconSpan.textContent : ''
                 };
             })
             .filter(item => item.text);
@@ -330,7 +330,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const header = `Approved use cases for AI tools ${context}:`;
         const requirements = selectedOptions.map(item => 
-            `<div class="requirement-item">${item.iconHTML}<span>${item.text}</span></div>`
+            `<div class="requirement-item">${item.icon} <span>${item.text}</span></div>`
         ).join('');
 
         return `${header}\n${requirements}`;
@@ -475,9 +475,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         ${section.iconHTML}
                         <div class="documentation-section">
                             <p class="documentation-header">${header}</p>
-                            <div class="documentation-requirements">
-                                ${requirements.join('')}
-                            </div>
+                            <ul class="documentation-requirements policy-list">
+                                ${requirements.filter(r => r.trim()).map(r => `<li>${r}</li>`).join('')}
+                            </ul>
                         </div>
                     </div>
                 `;
