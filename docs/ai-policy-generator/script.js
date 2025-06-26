@@ -591,62 +591,107 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Copy button
     copyBtn.addEventListener('click', function() {
-        const policyText = Array.from(previewContainer.querySelectorAll('.policy-section'))
-            .map(section => {
-                if (section.querySelector('.documentation-section')) {
-                    // Handle documentation and use cases sections
-                    const header = section.querySelector('.documentation-header').textContent;
-                    const requirements = Array.from(section.querySelectorAll('.requirement-item'))
-                        .map(item => item.querySelector('span').textContent)
-                        .join('\n');
-                    return `${header}\n${requirements}`;
-                } else {
-                    // Handle regular policy sections
-                    return section.querySelector('p').textContent.trim();
-                }
-            })
-            .filter(text => text) // Remove any empty sections
-            .join('\n\n');
-
-        navigator.clipboard.writeText(policyText).then(() => {
+        const plainText = extractPlainText();
+        navigator.clipboard.writeText(plainText).then(() => {
             const originalText = copyBtn.textContent;
             copyBtn.textContent = 'Copied!';
             setTimeout(() => {
-                copyBtn.textContent = originalText;
+                copyBtn.textContent = 'Copy Text';
             }, 2000);
         });
     });
 
+    // Function to extract clean plain text
+    function extractPlainText() {
+        const sections = [];
+        
+        // Add header
+        const header = previewContainer.querySelector('.policy-header h2');
+        if (header) {
+            sections.push(header.textContent.trim());
+            sections.push(''); // Empty line for spacing
+        }
+        
+        // Add sections with clean formatting
+        Array.from(previewContainer.querySelectorAll('.policy-section')).forEach(section => {
+            if (section.querySelector('.documentation-section')) {
+                // Handle documentation and use cases sections
+                const header = section.querySelector('.documentation-header').textContent.trim();
+                const requirements = Array.from(section.querySelectorAll('.requirement-item'))
+                    .map(item => {
+                        const text = item.querySelector('span').textContent.trim();
+                        return `• ${text}`;
+                    })
+                    .join('\n');
+                sections.push(`${header}\n${requirements}`);
+            } else {
+                // Handle regular policy sections
+                const text = section.querySelector('p').textContent.trim();
+                if (text) sections.push(text);
+            }
+        });
+        
+        return sections.join('\n\n');
+    }
+
     // Download RTF button
     downloadRTFBtn.addEventListener('click', function() {
-        // Generate the RTF content
-        let rtfContent = '{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033';
-        rtfContent += '{\\fonttbl{\\f0\\fnil\\fcharset0 Calibri;}}\n';
-        rtfContent += '{\\*\\generator Riched20 10.0.18362;}\\viewkind4\\uc1 \n';
-        rtfContent += '\\pard\\sa200\\sl276\\slmult1\\f0\\fs22\\lang9 ';
-
-        const sections = Array.from(previewContainer.querySelectorAll('.policy-section'));
-        sections.forEach((section, index) => {
-            const text = section.querySelector('p').textContent.trim();
-            const isLast = index === sections.length - 1;
-            
-            // Add RTF formatting
-            rtfContent += `${text}${isLast ? '' : '\\par\n'}`;
-        });
-
-        rtfContent += '}'; // Close the RTF document
-
+        const rtfContent = generateStructuredRTF();
+        
         // Create a blob and download it
         const blob = new Blob([rtfContent], { type: 'application/rtf' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'policy_statement.rtf';
+        a.download = 'ai_policy_statement.rtf';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
     });
+
+    // Function to generate structured RTF
+    function generateStructuredRTF() {
+        let rtf = '{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033';
+        rtf += '{\\fonttbl{\\f0\\fnil\\fcharset0 Calibri;}}';
+        rtf += '{\\colortbl;\\red0\\green102\\blue204;\\red44\\green62\\blue80;}';
+        rtf += '\\viewkind4\\uc1\\pard\\sa200\\sl276\\slmult1';
+        
+        // Add header
+        const header = previewContainer.querySelector('.policy-header h2');
+        if (header) {
+            rtf += '\\f0\\fs28\\b\\cf1 ' + escapeRTF(header.textContent.trim()) + '\\par\\par';
+        }
+        
+        // Add sections
+        Array.from(previewContainer.querySelectorAll('.policy-section')).forEach(section => {
+            if (section.querySelector('.documentation-section')) {
+                const header = section.querySelector('.documentation-header').textContent.trim();
+                rtf += '\\f0\\fs22\\b\\cf2 ' + escapeRTF(header) + '\\par';
+                
+                const requirements = Array.from(section.querySelectorAll('.requirement-item'))
+                    .map(item => {
+                        const text = item.querySelector('span').textContent.trim();
+                        return '\\bullet  ' + escapeRTF(text);
+                    })
+                    .join('\\par');
+                rtf += '\\f0\\fs20 ' + requirements + '\\par\\par';
+            } else {
+                const text = section.querySelector('p').textContent.trim();
+                if (text) {
+                    rtf += '\\f0\\fs20 ' + escapeRTF(text) + '\\par\\par';
+                }
+            }
+        });
+        
+        rtf += '}';
+        return rtf;
+    }
+
+    // Function to escape RTF special characters
+    function escapeRTF(text) {
+        return text.replace(/[\\{}]/g, '\\$&');
+    }
 
     // Embed button (show modal)
     embedBtn.addEventListener('click', function() {
