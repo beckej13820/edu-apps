@@ -601,7 +601,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Function to extract clean plain text
+    // Function to extract clean plain text with icons
     function extractPlainText() {
         const sections = [];
         
@@ -612,22 +612,26 @@ document.addEventListener('DOMContentLoaded', function() {
             sections.push(''); // Empty line for spacing
         }
         
-        // Add sections with clean formatting
+        // Add sections with clean formatting and icons
         Array.from(previewContainer.querySelectorAll('.policy-section')).forEach(section => {
             if (section.querySelector('.documentation-section')) {
                 // Handle documentation and use cases sections
                 const header = section.querySelector('.documentation-header').textContent.trim();
                 const requirements = Array.from(section.querySelectorAll('.requirement-item'))
                     .map(item => {
+                        const icon = item.querySelector('.icon')?.textContent || '';
                         const text = item.querySelector('span').textContent.trim();
-                        return `• ${text}`;
+                        return `${icon} ${text}`;
                     })
                     .join('\n');
                 sections.push(`${header}\n${requirements}`);
             } else {
                 // Handle regular policy sections
+                const icon = section.querySelector('.icon')?.textContent || '';
                 const text = section.querySelector('p').textContent.trim();
-                if (text) sections.push(text);
+                if (text) {
+                    sections.push(`${icon} ${text}`);
+                }
             }
         });
         
@@ -650,7 +654,7 @@ document.addEventListener('DOMContentLoaded', function() {
         URL.revokeObjectURL(url);
     });
 
-    // Function to generate structured RTF
+    // Function to generate structured RTF with icons
     function generateStructuredRTF() {
         let rtf = '{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033';
         rtf += '{\\fonttbl{\\f0\\fnil\\fcharset0 Calibri;}}';
@@ -671,15 +675,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 const requirements = Array.from(section.querySelectorAll('.requirement-item'))
                     .map(item => {
+                        const icon = item.querySelector('.icon')?.textContent || '';
                         const text = item.querySelector('span').textContent.trim();
-                        return '\\bullet  ' + escapeRTF(text);
+                        return escapeRTF(icon + ' ' + text);
                     })
                     .join('\\par');
                 rtf += '\\f0\\fs20 ' + requirements + '\\par\\par';
             } else {
+                const icon = section.querySelector('.icon')?.textContent || '';
                 const text = section.querySelector('p').textContent.trim();
                 if (text) {
-                    rtf += '\\f0\\fs20 ' + escapeRTF(text) + '\\par\\par';
+                    rtf += '\\f0\\fs20 ' + escapeRTF(icon + ' ' + text) + '\\par\\par';
                 }
             }
         });
