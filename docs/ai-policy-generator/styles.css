@@ -655,6 +655,18 @@ h2 {
     border-radius: 4px;
 }
 
+.policy-header.policy-permitted {
+    border-left-color: #28a745;
+}
+
+.policy-header.policy-limited {
+    border-left-color: #ffc107;
+}
+
+.policy-header.policy-prohibited {
+    border-left-color: #dc3545;
+}
+
 .policy-header h2 {
     margin: 0;
     font-size: 1.5rem;

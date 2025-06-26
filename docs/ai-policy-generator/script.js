@@ -467,8 +467,24 @@ document.addEventListener('DOMContentLoaded', function() {
         let policyHTML = '';
         policySections.forEach(section => {
             if (section.isHeader) {
+                // Determine the policy class based on AI usage
+                let policyClass = '';
+                if (aiUsage) {
+                    switch (aiUsage.value) {
+                        case 'encouraged':
+                            policyClass = 'policy-permitted';
+                            break;
+                        case 'limited':
+                            policyClass = 'policy-limited';
+                            break;
+                        case 'prohibited':
+                            policyClass = 'policy-prohibited';
+                            break;
+                    }
+                }
+                
                 policyHTML += `
-                    <div class="policy-header">
+                    <div class="policy-header ${policyClass}">
                         ${section.iconHTML}
                         <h2>${section.text}</h2>
                     </div>
