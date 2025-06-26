@@ -13,9 +13,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Embed Modal Elements
     const embedBtn = document.getElementById('embedBtn');
     const embedModal = document.getElementById('embedModal');
-    const closeModal = document.querySelector('.close-modal');
     const embedCode = document.getElementById('embedCode');
     const copyEmbedBtn = document.getElementById('copyEmbedBtn');
+
+    // Download Modal Elements
+    const downloadModal = document.getElementById('downloadModal');
+    const downloadHTMLBtn = document.getElementById('downloadHTML');
+    const downloadMarkdownBtn = document.getElementById('downloadMarkdown');
+    const downloadTextBtn = document.getElementById('downloadText');
 
     // Check if we're in an iframe
     const isInIframe = window.self !== window.top;
@@ -297,8 +302,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const header = `If you use AI ${context}, you must also:`;
         const requirements = selectedOptions.map(item => 
-            `<div class="requirement-item">${item.icon} <span>${item.text}</span></div>`
-        ).join('');
+            `${item.icon} ${item.text}`
+        ).join('\n');
 
         return `${header}\n${requirements}`;
     }
@@ -330,8 +335,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const header = `Approved use cases for AI tools ${context}:`;
         const requirements = selectedOptions.map(item => 
-            `<div class="requirement-item">${item.icon} <span>${item.text}</span></div>`
-        ).join('');
+            `${item.icon} ${item.text}`
+        ).join('\n');
 
         return `${header}\n${requirements}`;
     }
@@ -591,61 +596,56 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Copy button
     copyBtn.addEventListener('click', function() {
-        const policyText = Array.from(previewContainer.querySelectorAll('.policy-section'))
-            .map(section => {
-                if (section.querySelector('.documentation-section')) {
-                    // Handle documentation and use cases sections
-                    const header = section.querySelector('.documentation-header').textContent;
-                    const requirements = Array.from(section.querySelectorAll('.requirement-item'))
-                        .map(item => item.querySelector('span').textContent)
-                        .join('\n');
-                    return `${header}\n${requirements}`;
-                } else {
-                    // Handle regular policy sections
-                    return section.querySelector('p').textContent.trim();
-                }
-            })
-            .filter(text => text) // Remove any empty sections
-            .join('\n\n');
-
-        navigator.clipboard.writeText(policyText).then(() => {
+        const plainText = extractPlainText();
+        navigator.clipboard.writeText(plainText).then(() => {
             const originalText = copyBtn.textContent;
             copyBtn.textContent = 'Copied!';
             setTimeout(() => {
-                copyBtn.textContent = originalText;
+                copyBtn.textContent = 'Copy Text';
             }, 2000);
         });
     });
 
-    // Download RTF button
-    downloadRTFBtn.addEventListener('click', function() {
-        // Generate the RTF content
-        let rtfContent = '{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033';
-        rtfContent += '{\\fonttbl{\\f0\\fnil\\fcharset0 Calibri;}}\n';
-        rtfContent += '{\\*\\generator Riched20 10.0.18362;}\\viewkind4\\uc1 \n';
-        rtfContent += '\\pard\\sa200\\sl276\\slmult1\\f0\\fs22\\lang9 ';
-
-        const sections = Array.from(previewContainer.querySelectorAll('.policy-section'));
-        sections.forEach((section, index) => {
-            const text = section.querySelector('p').textContent.trim();
-            const isLast = index === sections.length - 1;
-            
-            // Add RTF formatting
-            rtfContent += `${text}${isLast ? '' : '\\par\n'}`;
+    // Function to extract clean plain text with icons
+    function extractPlainText() {
+        const sections = [];
+        
+        // Add header
+        const header = previewContainer.querySelector('.policy-header h2');
+        if (header) {
+            sections.push(header.textContent.trim());
+            sections.push(''); // Empty line for spacing
+        }
+        
+        // Add sections with clean formatting and icons
+        Array.from(previewContainer.querySelectorAll('.policy-section')).forEach(section => {
+            if (section.querySelector('.documentation-section')) {
+                // Handle documentation and use cases sections
+                const header = section.querySelector('.documentation-header').textContent.trim();
+                const requirements = Array.from(section.querySelectorAll('li'))
+                    .map(item => {
+                        // The icon is embedded directly in the li text
+                        return item.textContent.trim();
+                    })
+                    .join('\n');
+                sections.push(`${header}\n${requirements}`);
+            } else {
+                // Handle regular policy sections
+                const icon = section.querySelector('.icon')?.textContent || '';
+                const text = section.querySelector('p').textContent.trim();
+                if (text) {
+                    sections.push(`${icon} ${text}`);
+                }
+            }
         });
+        
+        return sections.join('\n\n');
+    }
 
-        rtfContent += '}'; // Close the RTF document
-
-        // Create a blob and download it
-        const blob = new Blob([rtfContent], { type: 'application/rtf' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'policy_statement.rtf';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+    // Download button - now shows format selection modal
+    downloadRTFBtn.addEventListener('click', function() {
+        downloadModal.classList.remove('hidden');
+        document.body.classList.add('modal-open');
     });
 
     // Embed button (show modal)
@@ -667,10 +667,40 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.classList.add('modal-open');
     });
 
-    // Close modal
-    closeModal.addEventListener('click', function() {
-        embedModal.classList.add('hidden');
-        document.body.classList.remove('modal-open');
+    // Close buttons for both modals
+    const closeButtons = document.querySelectorAll('.close-modal');
+
+    // Add event listeners to all close buttons
+    closeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            embedModal.classList.add('hidden');
+            downloadModal.classList.add('hidden');
+            document.body.classList.remove('modal-open');
+        });
+    });
+
+    // Close modals when clicking outside
+    embedModal.addEventListener('click', function(e) {
+        if (e.target === embedModal) {
+            embedModal.classList.add('hidden');
+            document.body.classList.remove('modal-open');
+        }
+    });
+
+    downloadModal.addEventListener('click', function(e) {
+        if (e.target === downloadModal) {
+            downloadModal.classList.add('hidden');
+            document.body.classList.remove('modal-open');
+        }
+    });
+
+    // Close modals with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            embedModal.classList.add('hidden');
+            downloadModal.classList.add('hidden');
+            document.body.classList.remove('modal-open');
+        }
     });
 
     // Copy embed code button
@@ -684,4 +714,248 @@ document.addEventListener('DOMContentLoaded', function() {
             copyEmbedBtn.textContent = originalText;
         }, 2000);
     });
+
+    // Download format event listeners
+    downloadHTMLBtn.addEventListener('click', function() {
+        downloadHTML();
+        downloadModal.classList.add('hidden');
+        document.body.classList.remove('modal-open');
+    });
+
+    downloadMarkdownBtn.addEventListener('click', function() {
+        downloadMarkdown();
+        downloadModal.classList.add('hidden');
+        document.body.classList.remove('modal-open');
+    });
+
+    downloadTextBtn.addEventListener('click', function() {
+        downloadPlainText();
+        downloadModal.classList.add('hidden');
+        document.body.classList.remove('modal-open');
+    });
+
+    // Download functions
+    function downloadHTML() {
+        const htmlContent = generateFormattedHTML();
+        const blob = new Blob([htmlContent], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'ai_policy_statement.html';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function downloadMarkdown() {
+        const markdownContent = generateMarkdown();
+        const blob = new Blob([markdownContent], { type: 'text/markdown' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'ai_policy_statement.md';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function downloadPlainText() {
+        const plainText = extractPlainText();
+        const blob = new Blob([plainText], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'ai_policy_statement.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // Generate formatted HTML
+    function generateFormattedHTML() {
+        const sections = [];
+        
+        // Add header
+        const header = previewContainer.querySelector('.policy-header h2');
+        if (header) {
+            sections.push(`<div class="policy-header">
+                <span class="icon" aria-hidden="true">ℹ️</span>
+                <h2>${header.textContent.trim()}</h2>
+            </div>`);
+        }
+        
+        // Add sections
+        Array.from(previewContainer.querySelectorAll('.policy-section')).forEach(section => {
+            if (section.querySelector('.documentation-section')) {
+                const header = section.querySelector('.documentation-header').textContent.trim();
+                const icon = section.querySelector('.icon')?.textContent || '';
+                
+                const requirements = Array.from(section.querySelectorAll('li'))
+                    .map(item => `<li>${item.textContent.trim()}</li>`)
+                    .join('');
+                
+                sections.push(`<div class="policy-section">
+                    <span class="icon" aria-hidden="true">${icon}</span>
+                    <div class="documentation-section">
+                        <p class="documentation-header">${header}</p>
+                        <ul class="documentation-requirements policy-list">
+                            ${requirements}
+                        </ul>
+                    </div>
+                </div>`);
+            } else {
+                const icon = section.querySelector('.icon')?.textContent || '';
+                const text = section.querySelector('p').textContent.trim();
+                if (text) {
+                    sections.push(`<div class="policy-section">
+                        <span class="icon" aria-hidden="true">${icon}</span>
+                        <p>${text}</p>
+                    </div>`);
+                }
+            }
+        });
+        
+        return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Policy Statement</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            line-height: 1.6; 
+            margin: 2rem; 
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            color: #333;
+        }
+        h1 { 
+            color: #0066cc; 
+            border-bottom: 2px solid #0066cc; 
+            padding-bottom: 0.5rem; 
+            margin-bottom: 2rem;
+        }
+        h2 { 
+            color: #2c3e50; 
+            margin-top: 2rem; 
+            margin-bottom: 1rem;
+        }
+        ul { 
+            margin-left: 1.5rem; 
+            margin-bottom: 1.5rem;
+        }
+        li { 
+            margin-bottom: 0.5rem; 
+        }
+        .policy-header {
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .policy-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        .policy-header .icon {
+            font-size: 1.25rem;
+            color: #007bff;
+        }
+        .policy-section {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            width: 100%;
+        }
+        .policy-section .icon {
+            font-size: 1.5em;
+            vertical-align: middle;
+            margin-right: 0.25em;
+            flex-shrink: 0;
+            margin-top: 0.25rem;
+        }
+        .policy-section p {
+            margin: 0;
+            flex: 1;
+            font-size: 0.9rem;
+        }
+        .documentation-section {
+            width: 100%;
+        }
+        .documentation-header {
+            font-weight: bold;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+        .documentation-requirements {
+            margin-left: 0;
+            padding-left: 0;
+        }
+        .documentation-requirements li {
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+        .policy-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        @media print {
+            body { margin: 1rem; }
+            .policy-header { break-inside: avoid; }
+            .policy-section { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <h1>AI Policy Statement</h1>
+    <div class="policy-statement">
+        ${sections.join('\n')}
+    </div>
+</body>
+</html>`;
+    }
+
+    // Generate Markdown
+    function generateMarkdown() {
+        const sections = [];
+        
+        // Add header
+        const header = previewContainer.querySelector('.policy-header h2');
+        if (header) {
+            sections.push(`# ${header.textContent.trim()}\n`);
+        }
+        
+        // Add sections
+        Array.from(previewContainer.querySelectorAll('.policy-section')).forEach(section => {
+            if (section.querySelector('.documentation-section')) {
+                const header = section.querySelector('.documentation-header').textContent.trim();
+                sections.push(`## ${header}\n`);
+                
+                const requirements = Array.from(section.querySelectorAll('li'))
+                    .map(item => `- ${item.textContent.trim()}`)
+                    .join('\n');
+                sections.push(requirements + '\n');
+            } else {
+                const icon = section.querySelector('.icon')?.textContent || '';
+                const text = section.querySelector('p').textContent.trim();
+                if (text) {
+                    sections.push(`${icon} ${text}\n`);
+                }
+            }
+        });
+        
+        return sections.join('\n');
+    }
 });
