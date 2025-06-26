@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const previewContainer = document.getElementById('previewContainer');
     const startOverBtn = document.getElementById('startOverBtn');
     const copyBtn = document.getElementById('copyBtn');
+    const shareBtn = document.getElementById('shareBtn');
     const downloadRTFBtn = document.getElementById('downloadRTF');
     const citationFormatContainer = document.getElementById('citationFormatContainer');
     const citationFormat = document.getElementById('citationFormat');
@@ -656,6 +657,35 @@ document.addEventListener('DOMContentLoaded', function() {
             copyBtn.textContent = 'Copied!';
             setTimeout(() => {
                 copyBtn.textContent = 'Copy Text';
+            }, 2000);
+        });
+    });
+
+    // Share button
+    shareBtn.addEventListener('click', function() {
+        // Get the current URL with policy parameters
+        const currentURL = window.location.href;
+        
+        navigator.clipboard.writeText(currentURL).then(() => {
+            const originalText = shareBtn.textContent;
+            shareBtn.textContent = 'Copied!';
+            setTimeout(() => {
+                shareBtn.textContent = 'Share';
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy URL:', err);
+            // Fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = currentURL;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            const originalText = shareBtn.textContent;
+            shareBtn.textContent = 'Copied!';
+            setTimeout(() => {
+                shareBtn.textContent = 'Share';
             }, 2000);
         });
     });
