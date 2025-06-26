@@ -409,8 +409,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 header += ', however use must be disclosed';
             }
 
-            // Add documentation requirement if needed
-            if (hasDocumentation) {
+            // Add documentation requirement if needed (only when AI is not prohibited)
+            if (hasDocumentation && aiUsage.value !== 'prohibited') {
                 if (requiresDisclosure) {
                     header += ' and additional documentation needs to be submitted';
                 } else {
