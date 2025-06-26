@@ -341,6 +341,42 @@ document.addEventListener('DOMContentLoaded', function() {
         return `${header}\n${requirements}`;
     }
 
+    // Generate dynamic policy icons based on current settings
+    function generatePolicyIcons() {
+        const aiUsage = document.querySelector('input[name="aiUsage"]:checked');
+        const requiresDisclosure = document.querySelector('input[name="citation"][value="required"]:checked') !== null;
+        const hasDocumentation = document.querySelectorAll('input[name="documentation"]:checked').length > 0;
+        
+        const icons = [];
+        
+        // AI Usage icon
+        if (aiUsage) {
+            switch (aiUsage.value) {
+                case 'encouraged':
+                    icons.push('<span class="policy-icon" aria-hidden="true" title="AI Use Permitted">✅</span>');
+                    break;
+                case 'limited':
+                    icons.push('<span class="policy-icon" aria-hidden="true" title="Some AI Use Permitted">⚠️</span>');
+                    break;
+                case 'prohibited':
+                    icons.push('<span class="policy-icon" aria-hidden="true" title="AI Prohibited">🚫</span>');
+                    break;
+            }
+        }
+        
+        // Disclosure requirement icon
+        if (requiresDisclosure) {
+            icons.push('<span class="policy-icon" aria-hidden="true" title="Disclosure Required">📢</span>');
+        }
+        
+        // Documentation requirement icon
+        if (hasDocumentation) {
+            icons.push('<span class="policy-icon" aria-hidden="true" title="Additional Documentation Required">📝</span>');
+        }
+        
+        return icons.join('');
+    }
+
     // Update policy preview
     function updatePolicyPreview() {
         const formData = new FormData(form);
@@ -382,10 +418,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
 
-            // Add header as first section
+            // Add header as first section with dynamic icons
             policySections.push({
                 text: header,
-                iconHTML: '<span class="icon" aria-hidden="true">ℹ️</span>',
+                iconHTML: generatePolicyIcons(),
                 isHeader: true
             });
         }
@@ -410,7 +446,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (text) {
                             policySections.push({
                                 text: text,
-                                iconHTML: '<span class="icon" aria-hidden="true">🗂️</span>',
+                                iconHTML: '<span class="icon" aria-hidden="true">📝</span>',
                                 isDocumentation: true
                             });
                         }
@@ -485,7 +521,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 policyHTML += `
                     <div class="policy-header ${policyClass}">
-                        ${section.iconHTML}
+                        <div class="policy-icons">
+                            ${section.iconHTML}
+                        </div>
                         <h2>${section.text}</h2>
                     </div>
                 `;
@@ -815,7 +853,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const header = previewContainer.querySelector('.policy-header h2');
         if (header) {
             sections.push(`<div class="policy-header ${policyClass}">
-                <span class="icon" aria-hidden="true">ℹ️</span>
+                <div class="policy-icons">
+                    ${generatePolicyIcons()}
+                </div>
                 <h2>${header.textContent.trim()}</h2>
             </div>`);
         }
@@ -892,8 +932,10 @@ document.addEventListener('DOMContentLoaded', function() {
             margin-bottom: 1.5rem;
             border-radius: 4px;
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            align-items: flex-start;
             gap: 0.75rem;
+            text-align: left;
         }
         .policy-header.policy-permitted {
             border-left-color: #28a745;
@@ -913,6 +955,22 @@ document.addEventListener('DOMContentLoaded', function() {
         .policy-header .icon {
             font-size: 1.25rem;
             color: #007bff;
+        }
+        .policy-icon {
+            font-size: 2rem;
+            margin-right: 0.5rem;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .policy-icon:last-child {
+            margin-right: 0;
+        }
+        .policy-icons {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
         }
         .policy-section {
             display: flex;
