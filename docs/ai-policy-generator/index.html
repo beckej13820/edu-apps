@@ -325,7 +325,7 @@
                     </div>
                     <div class="action-buttons">
                         <button type="button" id="startOverBtn" class="btn btn-secondary" aria-label="Start over and clear all selections">Start Over</button>
-                        <button type="button" id="downloadRTF" class="btn" aria-label="Download policy as document file">Download</button>
+                        <button type="button" id="downloadRTF" class="btn" aria-label="Download policy in multiple formats">Download</button>
                         <button type="button" id="copyBtn" class="btn" aria-label="Copy policy text to clipboard">Copy Text</button>
                         <button type="button" id="shareBtn" class="btn" aria-label="Share policy configuration">Share</button>
                     </div>
@@ -350,7 +350,7 @@
             <div class="modal-header">
                 <h2 id="modal-title">Embed AI Policy Generator</h2>
                 <button class="close-modal" aria-label="Close modal">
-                    <span class="icon" aria-hidden="true">❎</span>
+                    <span class="icon" aria-hidden="true">×</span>
                 </button>
             </div>
             <div class="modal-body">
@@ -372,6 +372,44 @@
                             aria-label="Preview of the AI Policy Generator"
                         ></iframe>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Download Format Modal -->
+    <div id="downloadModal" class="modal hidden" role="dialog" aria-labelledby="download-modal-title" aria-modal="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="download-modal-title">Choose Download Format</h2>
+                <button class="close-modal" aria-label="Close modal">
+                    <span class="icon" aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Select the format you'd like to download your AI policy statement:</p>
+                <div class="download-options">
+                    <button id="downloadHTML" class="download-option">
+                        <div class="option-icon">🌐</div>
+                        <div class="option-content">
+                            <h3>HTML Document</h3>
+                            <p>Formatted web page with icons and styling. Opens in any browser and can be printed or saved as PDF.</p>
+                        </div>
+                    </button>
+                    <button id="downloadMarkdown" class="download-option">
+                        <div class="option-icon">📝</div>
+                        <div class="option-content">
+                            <h3>Markdown</h3>
+                            <p>Plain text format with simple formatting. Works well with platforms like GitHub, Notion, and many editors.</p>
+                        </div>
+                    </button>
+                    <button id="downloadText" class="download-option">
+                        <div class="option-icon">📄</div>
+                        <div class="option-content">
+                            <h3>Plain Text</h3>
+                            <p>Simple text format that works everywhere. Icons will appear as emoji characters.</p>
+                        </div>
+                    </button>
                 </div>
             </div>
         </div>
