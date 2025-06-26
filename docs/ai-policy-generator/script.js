@@ -794,10 +794,27 @@ document.addEventListener('DOMContentLoaded', function() {
     function generateFormattedHTML() {
         const sections = [];
         
+        // Get AI usage for dynamic styling
+        const aiUsage = document.querySelector('input[name="aiUsage"]:checked');
+        let policyClass = '';
+        if (aiUsage) {
+            switch (aiUsage.value) {
+                case 'encouraged':
+                    policyClass = 'policy-permitted';
+                    break;
+                case 'limited':
+                    policyClass = 'policy-limited';
+                    break;
+                case 'prohibited':
+                    policyClass = 'policy-prohibited';
+                    break;
+            }
+        }
+        
         // Add header
         const header = previewContainer.querySelector('.policy-header h2');
         if (header) {
-            sections.push(`<div class="policy-header">
+            sections.push(`<div class="policy-header ${policyClass}">
                 <span class="icon" aria-hidden="true">ℹ️</span>
                 <h2>${header.textContent.trim()}</h2>
             </div>`);
@@ -878,6 +895,15 @@ document.addEventListener('DOMContentLoaded', function() {
             align-items: center;
             gap: 0.75rem;
         }
+        .policy-header.policy-permitted {
+            border-left-color: #28a745;
+        }
+        .policy-header.policy-limited {
+            border-left-color: #ffc107;
+        }
+        .policy-header.policy-prohibited {
+            border-left-color: #dc3545;
+        }
         .policy-header h2 {
             margin: 0;
             font-size: 1.5rem;
@@ -957,7 +983,8 @@ document.addEventListener('DOMContentLoaded', function() {
         Array.from(previewContainer.querySelectorAll('.policy-section')).forEach(section => {
             if (section.querySelector('.documentation-section')) {
                 const header = section.querySelector('.documentation-header').textContent.trim();
-                sections.push(`## ${header}\n`);
+                const icon = section.querySelector('.icon')?.textContent || '';
+                sections.push(`## ${icon} ${header}\n`);
                 
                 const requirements = Array.from(section.querySelectorAll('li'))
                     .map(item => `- ${item.textContent.trim()}`)
