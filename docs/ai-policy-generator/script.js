@@ -740,7 +740,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const encodedState = encodeFormState();
         
         // Create embed code that works for both WordPress and Brightspace
-        const iframeHTML = `<iframe src="${currentDomain}${currentPath}?policy=${encodedState}" width="100%" height="600px" frameborder="0" style="border:none;"></iframe>`;
+        const iframeHTML = `<iframe src="${currentDomain}${currentPath}?policy=${encodedState}" width="100%" height="1000px" frameborder="0" style="border:none;"></iframe>`;
         
         // Set the embed code in the modal
         embedCode.textContent = iframeHTML;
