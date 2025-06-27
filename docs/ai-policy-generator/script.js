@@ -743,7 +743,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const iframeHTML = `<iframe src="${currentDomain}${currentPath}?policy=${encodedState}" width="100%" height="600px" frameborder="0" style="border:none;"></iframe>`;
         
         // Set the embed code in the modal
-        embedCode.value = iframeHTML;
+        embedCode.textContent = iframeHTML;
 
         // Show the modal
         embedModal.classList.remove('hidden');
@@ -788,8 +788,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Copy embed code button
     copyEmbedBtn.addEventListener('click', function() {
-        embedCode.select();
+        const range = document.createRange();
+        range.selectNodeContents(embedCode);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
         document.execCommand('copy');
+        selection.removeAllRanges();
 
         const originalText = copyEmbedBtn.textContent;
         copyEmbedBtn.textContent = 'Copied!';
