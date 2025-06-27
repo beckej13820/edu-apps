@@ -734,17 +734,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Embed button (show modal)
     embedBtn.addEventListener('click', function() {
-        // Generate the embed code
-        const policyText = Array.from(previewContainer.querySelectorAll('.policy-section'))
-            .map(section => {
-                const answer = section.querySelector('p').textContent.trim();
-                return answer;
-            })
-            .join('\n\n');
+        // Generate the embed code with current domain and policy state
+        const currentDomain = window.location.origin;
+        const currentPath = window.location.pathname;
+        const encodedState = encodeFormState();
         
-        const encodedPolicy = btoa(policyText);
-        const iframeHTML = `<iframe src="https://yourdomain.com/policy-viewer?policy=${encodedPolicy}" width="100%" height="600px" style="border:none;"></iframe>`;
-        embedCode.value = iframeHTML; // Set the embed code in the modal
+        // Create embed code that works for both WordPress and Brightspace
+        const iframeHTML = `<iframe src="${currentDomain}${currentPath}?policy=${encodedState}" width="100%" height="1000px" frameborder="0" style="border:none;"></iframe>`;
+        
+        // Set the embed code in the modal
+        embedCode.textContent = iframeHTML;
 
         // Show the modal
         embedModal.classList.remove('hidden');
@@ -789,8 +788,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Copy embed code button
     copyEmbedBtn.addEventListener('click', function() {
-        embedCode.select();
+        const range = document.createRange();
+        range.selectNodeContents(embedCode);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
         document.execCommand('copy');
+        selection.removeAllRanges();
 
         const originalText = copyEmbedBtn.textContent;
         copyEmbedBtn.textContent = 'Copied!';
