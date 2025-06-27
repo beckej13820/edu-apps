@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const header = `If you use AI ${context}, you must also:`;
         const requirements = selectedOptions.map(item => 
-            `${item.icon} ${item.text}`
+            `<span class="icon">${item.icon}</span> ${item.text}`
         ).join('\n');
 
         return `${header}\n${requirements}`;
@@ -335,7 +335,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const header = `Approved use cases for AI tools ${context}:`;
         const requirements = selectedOptions.map(item => 
-            `${item.icon} ${item.text}`
+            `<span class="icon">${item.icon}</span> ${item.text}`
         ).join('\n');
 
         return `${header}\n${requirements}`;
