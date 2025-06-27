@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const previewContainer = document.getElementById('previewContainer');
     const startOverBtn = document.getElementById('startOverBtn');
     const copyBtn = document.getElementById('copyBtn');
+    const shareBtn = document.getElementById('shareBtn');
     const downloadRTFBtn = document.getElementById('downloadRTF');
     const citationFormatContainer = document.getElementById('citationFormatContainer');
     const citationFormat = document.getElementById('citationFormat');
@@ -341,6 +342,42 @@ document.addEventListener('DOMContentLoaded', function() {
         return `${header}\n${requirements}`;
     }
 
+    // Generate dynamic policy icons based on current settings
+    function generatePolicyIcons() {
+        const aiUsage = document.querySelector('input[name="aiUsage"]:checked');
+        const requiresDisclosure = document.querySelector('input[name="citation"][value="required"]:checked') !== null;
+        const hasDocumentation = document.querySelectorAll('input[name="documentation"]:checked').length > 0;
+        
+        const icons = [];
+        
+        // AI Usage icon
+        if (aiUsage) {
+            switch (aiUsage.value) {
+                case 'encouraged':
+                    icons.push('<span class="policy-icon" aria-hidden="true" title="AI Use Permitted">✅</span>');
+                    break;
+                case 'limited':
+                    icons.push('<span class="policy-icon" aria-hidden="true" title="Some AI Use Permitted">⚠️</span>');
+                    break;
+                case 'prohibited':
+                    icons.push('<span class="policy-icon" aria-hidden="true" title="AI Prohibited">🚫</span>');
+                    break;
+            }
+        }
+        
+        // Disclosure requirement icon
+        if (requiresDisclosure) {
+            icons.push('<span class="policy-icon" aria-hidden="true" title="Disclosure Required">📢</span>');
+        }
+        
+        // Documentation requirement icon
+        if (hasDocumentation) {
+            icons.push('<span class="policy-icon" aria-hidden="true" title="Additional Documentation Required">📝</span>');
+        }
+        
+        return icons.join('');
+    }
+
     // Update policy preview
     function updatePolicyPreview() {
         const formData = new FormData(form);
@@ -373,8 +410,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 header += ', however use must be disclosed';
             }
 
-            // Add documentation requirement if needed
-            if (hasDocumentation) {
+            // Add documentation requirement if needed (only when AI is not prohibited)
+            if (hasDocumentation && aiUsage.value !== 'prohibited') {
                 if (requiresDisclosure) {
                     header += ' and additional documentation needs to be submitted';
                 } else {
@@ -382,10 +419,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
 
-            // Add header as first section
+            // Add header as first section with dynamic icons
             policySections.push({
                 text: header,
-                iconHTML: '<span class="icon" aria-hidden="true">ℹ️</span>',
+                iconHTML: generatePolicyIcons(),
                 isHeader: true
             });
         }
@@ -410,7 +447,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (text) {
                             policySections.push({
                                 text: text,
-                                iconHTML: '<span class="icon" aria-hidden="true">🗂️</span>',
+                                iconHTML: '<span class="icon" aria-hidden="true">📝</span>',
                                 isDocumentation: true
                             });
                         }
@@ -467,9 +504,27 @@ document.addEventListener('DOMContentLoaded', function() {
         let policyHTML = '';
         policySections.forEach(section => {
             if (section.isHeader) {
+                // Determine the policy class based on AI usage
+                let policyClass = '';
+                if (aiUsage) {
+                    switch (aiUsage.value) {
+                        case 'encouraged':
+                            policyClass = 'policy-permitted';
+                            break;
+                        case 'limited':
+                            policyClass = 'policy-limited';
+                            break;
+                        case 'prohibited':
+                            policyClass = 'policy-prohibited';
+                            break;
+                    }
+                }
+                
                 policyHTML += `
-                    <div class="policy-header">
-                        ${section.iconHTML}
+                    <div class="policy-header ${policyClass}">
+                        <div class="policy-icons">
+                            ${section.iconHTML}
+                        </div>
                         <h2>${section.text}</h2>
                     </div>
                 `;
@@ -602,6 +657,35 @@ document.addEventListener('DOMContentLoaded', function() {
             copyBtn.textContent = 'Copied!';
             setTimeout(() => {
                 copyBtn.textContent = 'Copy Text';
+            }, 2000);
+        });
+    });
+
+    // Share button
+    shareBtn.addEventListener('click', function() {
+        // Get the current URL with policy parameters
+        const currentURL = window.location.href;
+        
+        navigator.clipboard.writeText(currentURL).then(() => {
+            const originalText = shareBtn.textContent;
+            shareBtn.textContent = 'Copied!';
+            setTimeout(() => {
+                shareBtn.textContent = 'Share';
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy URL:', err);
+            // Fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = currentURL;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            const originalText = shareBtn.textContent;
+            shareBtn.textContent = 'Copied!';
+            setTimeout(() => {
+                shareBtn.textContent = 'Share';
             }, 2000);
         });
     });
@@ -778,11 +862,30 @@ document.addEventListener('DOMContentLoaded', function() {
     function generateFormattedHTML() {
         const sections = [];
         
+        // Get AI usage for dynamic styling
+        const aiUsage = document.querySelector('input[name="aiUsage"]:checked');
+        let policyClass = '';
+        if (aiUsage) {
+            switch (aiUsage.value) {
+                case 'encouraged':
+                    policyClass = 'policy-permitted';
+                    break;
+                case 'limited':
+                    policyClass = 'policy-limited';
+                    break;
+                case 'prohibited':
+                    policyClass = 'policy-prohibited';
+                    break;
+            }
+        }
+        
         // Add header
         const header = previewContainer.querySelector('.policy-header h2');
         if (header) {
-            sections.push(`<div class="policy-header">
-                <span class="icon" aria-hidden="true">ℹ️</span>
+            sections.push(`<div class="policy-header ${policyClass}">
+                <div class="policy-icons">
+                    ${generatePolicyIcons()}
+                </div>
                 <h2>${header.textContent.trim()}</h2>
             </div>`);
         }
@@ -859,8 +962,19 @@ document.addEventListener('DOMContentLoaded', function() {
             margin-bottom: 1.5rem;
             border-radius: 4px;
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            align-items: flex-start;
             gap: 0.75rem;
+            text-align: left;
+        }
+        .policy-header.policy-permitted {
+            border-left-color: #28a745;
+        }
+        .policy-header.policy-limited {
+            border-left-color: #ffc107;
+        }
+        .policy-header.policy-prohibited {
+            border-left-color: #dc3545;
         }
         .policy-header h2 {
             margin: 0;
@@ -871,6 +985,22 @@ document.addEventListener('DOMContentLoaded', function() {
         .policy-header .icon {
             font-size: 1.25rem;
             color: #007bff;
+        }
+        .policy-icon {
+            font-size: 2rem;
+            margin-right: 0.5rem;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .policy-icon:last-child {
+            margin-right: 0;
+        }
+        .policy-icons {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
         }
         .policy-section {
             display: flex;
@@ -941,7 +1071,8 @@ document.addEventListener('DOMContentLoaded', function() {
         Array.from(previewContainer.querySelectorAll('.policy-section')).forEach(section => {
             if (section.querySelector('.documentation-section')) {
                 const header = section.querySelector('.documentation-header').textContent.trim();
-                sections.push(`## ${header}\n`);
+                const icon = section.querySelector('.icon')?.textContent || '';
+                sections.push(`## ${icon} ${header}\n`);
                 
                 const requirements = Array.from(section.querySelectorAll('li'))
                     .map(item => `- ${item.textContent.trim()}`)
