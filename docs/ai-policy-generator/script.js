@@ -371,7 +371,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Documentation requirement icon
-        if (hasDocumentation) {
+        if (hasDocumentation && aiUsage && aiUsage.value !== 'prohibited') {
             icons.push('<span class="policy-icon" aria-hidden="true" title="Additional Documentation Required">📝</span>');
         }
         
