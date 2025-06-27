@@ -727,27 +727,39 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Download button - now shows format selection modal
-    downloadRTFBtn.addEventListener('click', function() {
-        downloadModal.classList.remove('hidden');
-        document.body.classList.add('modal-open');
+    downloadRTFBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        try {
+            downloadModal.classList.remove('hidden');
+            document.body.classList.add('modal-open');
+        } catch (error) {
+            console.error('Failed to open download modal:', error);
+        }
     });
 
     // Embed button (show modal)
-    embedBtn.addEventListener('click', function() {
-        // Generate the embed code with current domain and policy state
-        const currentDomain = window.location.origin;
-        const currentPath = window.location.pathname;
-        const encodedState = encodeFormState();
-        
-        // Create embed code that works for both WordPress and Brightspace
-        const iframeHTML = `<iframe src="${currentDomain}${currentPath}?policy=${encodedState}" width="100%" height="1000px" frameborder="0" style="border:none;"></iframe>`;
-        
-        // Set the embed code in the modal
-        embedCode.textContent = iframeHTML;
+    embedBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        try {
+            // Generate the embed code with current domain and policy state
+            const currentDomain = window.location.origin;
+            const currentPath = window.location.pathname;
+            const encodedState = encodeFormState();
+            
+            // Create embed code that works for both WordPress and Brightspace
+            const iframeHTML = `<iframe src="${currentDomain}${currentPath}?policy=${encodedState}" width="100%" height="1000px" frameborder="0" style="border:none;"></iframe>`;
+            
+            // Set the embed code in the modal
+            embedCode.textContent = iframeHTML;
 
-        // Show the modal
-        embedModal.classList.remove('hidden');
-        document.body.classList.add('modal-open');
+            // Show the modal
+            embedModal.classList.remove('hidden');
+            document.body.classList.add('modal-open');
+        } catch (error) {
+            console.error('Failed to open embed modal:', error);
+        }
     });
 
     // Close buttons for both modals
@@ -755,10 +767,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add event listeners to all close buttons
     closeButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            embedModal.classList.add('hidden');
-            downloadModal.classList.add('hidden');
-            document.body.classList.remove('modal-open');
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            try {
+                embedModal.classList.add('hidden');
+                downloadModal.classList.add('hidden');
+                document.body.classList.remove('modal-open');
+            } catch (error) {
+                console.error('Failed to close modal:', error);
+            }
         });
     });
 
@@ -787,39 +805,63 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Copy embed code button
-    copyEmbedBtn.addEventListener('click', function() {
-        const range = document.createRange();
-        range.selectNodeContents(embedCode);
-        const selection = window.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(range);
-        document.execCommand('copy');
-        selection.removeAllRanges();
+    copyEmbedBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        try {
+            const range = document.createRange();
+            range.selectNodeContents(embedCode);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            document.execCommand('copy');
+            selection.removeAllRanges();
 
-        const originalText = copyEmbedBtn.textContent;
-        copyEmbedBtn.textContent = 'Copied!';
-        setTimeout(() => {
-            copyEmbedBtn.textContent = originalText;
-        }, 2000);
+            const originalText = copyEmbedBtn.textContent;
+            copyEmbedBtn.textContent = 'Copied!';
+            setTimeout(() => {
+                copyEmbedBtn.textContent = originalText;
+            }, 2000);
+        } catch (error) {
+            console.error('Copy failed:', error);
+        }
     });
 
     // Download format event listeners
-    downloadHTMLBtn.addEventListener('click', function() {
-        downloadHTML();
-        downloadModal.classList.add('hidden');
-        document.body.classList.remove('modal-open');
+    downloadHTMLBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        try {
+            downloadHTML();
+            downloadModal.classList.add('hidden');
+            document.body.classList.remove('modal-open');
+        } catch (error) {
+            console.error('Download HTML failed:', error);
+        }
     });
 
-    downloadMarkdownBtn.addEventListener('click', function() {
-        downloadMarkdown();
-        downloadModal.classList.add('hidden');
-        document.body.classList.remove('modal-open');
+    downloadMarkdownBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        try {
+            downloadMarkdown();
+            downloadModal.classList.add('hidden');
+            document.body.classList.remove('modal-open');
+        } catch (error) {
+            console.error('Download Markdown failed:', error);
+        }
     });
 
-    downloadTextBtn.addEventListener('click', function() {
-        downloadPlainText();
-        downloadModal.classList.add('hidden');
-        document.body.classList.remove('modal-open');
+    downloadTextBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        try {
+            downloadPlainText();
+            downloadModal.classList.add('hidden');
+            document.body.classList.remove('modal-open');
+        } catch (error) {
+            console.error('Download Text failed:', error);
+        }
     });
 
     // Download functions
@@ -1080,4 +1122,122 @@ document.addEventListener('DOMContentLoaded', function() {
         
         return sections.join('\n');
     }
+
+    // Add event delegation as fallback for WordPress iframe environments
+    document.addEventListener('click', function(e) {
+        // Handle modal opening buttons
+        if (e.target.closest('#downloadRTF')) {
+            e.preventDefault();
+            e.stopPropagation();
+            try {
+                downloadModal.classList.remove('hidden');
+                document.body.classList.add('modal-open');
+            } catch (error) {
+                console.error('Failed to open download modal (delegated):', error);
+            }
+            return;
+        }
+
+        if (e.target.closest('#embedBtn')) {
+            e.preventDefault();
+            e.stopPropagation();
+            try {
+                // Generate the embed code with current domain and policy state
+                const currentDomain = window.location.origin;
+                const currentPath = window.location.pathname;
+                const encodedState = encodeFormState();
+                
+                // Create embed code that works for both WordPress and Brightspace
+                const iframeHTML = `<iframe src="${currentDomain}${currentPath}?policy=${encodedState}" width="100%" height="1000px" frameborder="0" style="border:none;"></iframe>`;
+                
+                // Set the embed code in the modal
+                embedCode.textContent = iframeHTML;
+
+                // Show the modal
+                embedModal.classList.remove('hidden');
+                document.body.classList.add('modal-open');
+            } catch (error) {
+                console.error('Failed to open embed modal (delegated):', error);
+            }
+            return;
+        }
+
+        // Handle close modal buttons
+        if (e.target.closest('.close-modal')) {
+            e.preventDefault();
+            e.stopPropagation();
+            try {
+                embedModal.classList.add('hidden');
+                downloadModal.classList.add('hidden');
+                document.body.classList.remove('modal-open');
+            } catch (error) {
+                console.error('Failed to close modal (delegated):', error);
+            }
+            return;
+        }
+
+        // Handle download buttons
+        if (e.target.closest('#downloadHTML')) {
+            e.preventDefault();
+            e.stopPropagation();
+            try {
+                downloadHTML();
+                downloadModal.classList.add('hidden');
+                document.body.classList.remove('modal-open');
+            } catch (error) {
+                console.error('Download HTML failed (delegated):', error);
+            }
+            return;
+        }
+
+        if (e.target.closest('#downloadMarkdown')) {
+            e.preventDefault();
+            e.stopPropagation();
+            try {
+                downloadMarkdown();
+                downloadModal.classList.add('hidden');
+                document.body.classList.remove('modal-open');
+            } catch (error) {
+                console.error('Download Markdown failed (delegated):', error);
+            }
+            return;
+        }
+
+        if (e.target.closest('#downloadText')) {
+            e.preventDefault();
+            e.stopPropagation();
+            try {
+                downloadPlainText();
+                downloadModal.classList.add('hidden');
+                document.body.classList.remove('modal-open');
+            } catch (error) {
+                console.error('Download Text failed (delegated):', error);
+            }
+            return;
+        }
+
+        // Handle copy embed button
+        if (e.target.closest('#copyEmbedBtn')) {
+            e.preventDefault();
+            e.stopPropagation();
+            try {
+                const range = document.createRange();
+                range.selectNodeContents(embedCode);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                document.execCommand('copy');
+                selection.removeAllRanges();
+
+                const originalText = copyEmbedBtn.textContent;
+                copyEmbedBtn.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyEmbedBtn.textContent = originalText;
+                }, 2000);
+            } catch (error) {
+                console.error('Copy failed (delegated):', error);
+            }
+            return;
+        }
+    });
 });
