@@ -303,7 +303,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const header = `If you use AI ${context}, you must also:`;
         const requirements = selectedOptions.map(item => 
-            `${item.icon} ${item.text}`
+            `<span class="icon">${item.icon}</span> ${item.text}`
         ).join('\n');
 
         return `${header}\n${requirements}`;
@@ -336,7 +336,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const header = `Approved use cases for AI tools ${context}:`;
         const requirements = selectedOptions.map(item => 
-            `${item.icon} ${item.text}`
+            `<span class="icon">${item.icon}</span> ${item.text}`
         ).join('\n');
 
         return `${header}\n${requirements}`;
@@ -894,12 +894,21 @@ document.addEventListener('DOMContentLoaded', function() {
         Array.from(previewContainer.querySelectorAll('.policy-section')).forEach(section => {
             if (section.querySelector('.documentation-section')) {
                 const header = section.querySelector('.documentation-header').textContent.trim();
-                const icon = section.querySelector('.icon')?.textContent || '';
-                
+                // For each li, wrap the icon in <span class="icon">...</span>
                 const requirements = Array.from(section.querySelectorAll('li'))
-                    .map(item => `<li>${item.textContent.trim()}</li>`)
+                    .map(item => {
+                        // Extract icon and text
+                        const iconMatch = item.textContent.trim().match(/^([\p{Emoji}\p{Symbol}\p{P}]+)\s+/u);
+                        let icon = '';
+                        let text = item.textContent.trim();
+                        if (iconMatch) {
+                            icon = iconMatch[1];
+                            text = item.textContent.trim().slice(icon.length).trim();
+                        }
+                        return `<li><span class="icon">${icon}</span> ${text}</li>`;
+                    })
                     .join('');
-                
+                const icon = section.querySelector('.icon')?.textContent || '';
                 sections.push(`<div class="policy-section">
                     <span class="icon" aria-hidden="true">${icon}</span>
                     <div class="documentation-section">
@@ -928,6 +937,11 @@ document.addEventListener('DOMContentLoaded', function() {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Policy Statement</title>
     <style>
+        .policy-statement .icon {
+            font-size: 1.5em;
+            vertical-align: middle;
+            margin-right: 0.5em;
+        }
         body { 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
             line-height: 1.6; 
@@ -962,19 +976,8 @@ document.addEventListener('DOMContentLoaded', function() {
             margin-bottom: 1.5rem;
             border-radius: 4px;
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
             gap: 0.75rem;
-            text-align: left;
-        }
-        .policy-header.policy-permitted {
-            border-left-color: #28a745;
-        }
-        .policy-header.policy-limited {
-            border-left-color: #ffc107;
-        }
-        .policy-header.policy-prohibited {
-            border-left-color: #dc3545;
         }
         .policy-header h2 {
             margin: 0;
@@ -985,22 +988,6 @@ document.addEventListener('DOMContentLoaded', function() {
         .policy-header .icon {
             font-size: 1.25rem;
             color: #007bff;
-        }
-        .policy-icon {
-            font-size: 2rem;
-            margin-right: 0.5rem;
-            display: inline-block;
-            vertical-align: middle;
-        }
-        .policy-icon:last-child {
-            margin-right: 0;
-        }
-        .policy-icons {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
         }
         .policy-section {
             display: flex;
