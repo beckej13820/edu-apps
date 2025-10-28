@@ -88,14 +88,55 @@
     <a href="#main-content" class="skip-link">Skip to main content</a>
     <main id="main-content" class="container" role="main" tabindex="-1">
         <h1>AI Policy Statement Generator</h1>
-        
+
+        <!-- Progress Indicator -->
+        <div class="progress-container" role="region" aria-label="Progress Indicator">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            <p class="progress-text" id="progressText">0% Complete</p>
+        </div>
+
+        <!-- Quick Start Templates -->
+        <div class="templates-container" role="region" aria-label="Quick Start Templates">
+            <h2>Quick Start Templates</h2>
+            <p class="template-description">Choose a preset to quickly configure your policy, or start from scratch.</p>
+            <div class="template-buttons">
+                <button type="button" class="template-btn" id="strictTemplate" aria-label="Use strict policy template">
+                    <span class="template-icon">🚫</span>
+                    <span class="template-name">Strict</span>
+                    <span class="template-desc">AI prohibited</span>
+                </button>
+                <button type="button" class="template-btn" id="moderateTemplate" aria-label="Use moderate policy template">
+                    <span class="template-icon">⚠️</span>
+                    <span class="template-name">Moderate</span>
+                    <span class="template-desc">Limited AI use</span>
+                </button>
+                <button type="button" class="template-btn" id="liberalTemplate" aria-label="Use liberal policy template">
+                    <span class="template-icon">✅</span>
+                    <span class="template-name">Liberal</span>
+                    <span class="template-desc">AI encouraged</span>
+                </button>
+                <button type="button" class="template-btn" id="customTemplate" aria-label="Start from scratch">
+                    <span class="template-icon">✏️</span>
+                    <span class="template-name">Custom</span>
+                    <span class="template-desc">Start from scratch</span>
+                </button>
+            </div>
+        </div>
+
         <div class="form-container">
             <!-- Left Column: Questions -->
             <div class="questions-column" role="region" aria-label="Policy Configuration">
                 <form id="policyForm" class="policy-form" aria-label="AI Policy Configuration Form">
                     <!-- Question 1: Policy Scope -->
                     <div class="question-container" id="question1" data-question="policyScope" role="group" aria-labelledby="scope-heading">
-                        <h2 id="scope-heading">Is this AI Policy for your entire course or for a specific assignment?</h2>
+                        <h2 id="scope-heading">
+                            Is this AI Policy for your entire course or for a specific assignment?
+                            <button type="button" class="info-icon" aria-label="More information about policy scope" data-tooltip="Choose 'Entire Course' for a consistent AI policy across all assignments, or 'Specific Assignment' to tailor the policy for one particular activity.">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                        </h2>
                         <div class="options-grid" role="radiogroup" aria-labelledby="scope-heading">
                             <label class="option-card">
                                 <input type="radio" name="policyScope" value="course" required aria-describedby="course-desc">
@@ -211,6 +252,51 @@
                                 </div>
                             </label>
                             <label class="option-card checkbox-card">
+                                <input type="checkbox" name="useCases" value="grammar" aria-describedby="grammar-desc">
+                                <div class="card-content">
+                                    <span aria-hidden="true" class="icon">✍️</span>
+                                    <h3>Grammar & Spelling</h3>
+                                    <p id="grammar-desc" class="course-text">Allowed for grammar checking, spell checking, and proofreading.</p>
+                                    <p class="assignment-text hidden">Allowed for grammar checking, spell checking, and proofreading for this assignment.</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="useCases" value="translation" aria-describedby="translation-desc">
+                                <div class="card-content">
+                                    <span aria-hidden="true" class="icon">🌐</span>
+                                    <h3>Translation</h3>
+                                    <p id="translation-desc" class="course-text">Allowed for translating text between languages.</p>
+                                    <p class="assignment-text hidden">Allowed for translating text between languages for this assignment.</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="useCases" value="code" aria-describedby="code-desc">
+                                <div class="card-content">
+                                    <span aria-hidden="true" class="icon">💻</span>
+                                    <h3>Code Generation & Debugging</h3>
+                                    <p id="code-desc" class="course-text">Allowed for generating, debugging, or explaining code.</p>
+                                    <p class="assignment-text hidden">Allowed for generating, debugging, or explaining code for this assignment.</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="useCases" value="image" aria-describedby="image-desc">
+                                <div class="card-content">
+                                    <span aria-hidden="true" class="icon">🎨</span>
+                                    <h3>Image & Media Generation</h3>
+                                    <p id="image-desc" class="course-text">Allowed for creating images, graphics, or other media content.</p>
+                                    <p class="assignment-text hidden">Allowed for creating images, graphics, or other media content for this assignment.</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="useCases" value="accessibility" aria-describedby="accessibility-desc">
+                                <div class="card-content">
+                                    <span aria-hidden="true" class="icon">♿</span>
+                                    <h3>Accessibility Tools</h3>
+                                    <p id="accessibility-desc" class="course-text">Allowed as assistive technology for accessibility needs.</p>
+                                    <p class="assignment-text hidden">Allowed as assistive technology for accessibility needs for this assignment.</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
                                 <input type="checkbox" name="useCases" value="other" aria-describedby="other-use-desc">
                                 <div class="card-content">
                                     <span aria-hidden="true" class="icon">➕</span>
@@ -314,6 +400,42 @@
                                 </div>
                             </label>
                             <label class="option-card checkbox-card">
+                                <input type="checkbox" name="documentation" value="usagelog" aria-describedby="usagelog-desc">
+                                <div class="card-content">
+                                    <span aria-hidden="true" class="icon">📋</span>
+                                    <h3>Usage Log/Timeline</h3>
+                                    <p id="usagelog-desc" class="course-text">You must maintain a log documenting when and how you used AI tools.</p>
+                                    <p class="assignment-text hidden">You must maintain a log documenting when and how you used AI tools for this assignment.</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="documentation" value="percentage" aria-describedby="percentage-desc">
+                                <div class="card-content">
+                                    <span aria-hidden="true" class="icon">📈</span>
+                                    <h3>Percentage Disclosure</h3>
+                                    <p id="percentage-desc" class="course-text">You must estimate and disclose what percentage of your work was AI-assisted.</p>
+                                    <p class="assignment-text hidden">You must estimate and disclose what percentage of this assignment was AI-assisted.</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="documentation" value="beforeafter" aria-describedby="beforeafter-desc">
+                                <div class="card-content">
+                                    <span aria-hidden="true" class="icon">🔀</span>
+                                    <h3>Before/After Comparison</h3>
+                                    <p id="beforeafter-desc" class="course-text">You must submit both the AI-generated output and your revised final version.</p>
+                                    <p class="assignment-text hidden">You must submit both the AI-generated output and your revised final version for this assignment.</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
+                                <input type="checkbox" name="documentation" value="learningoutcomes" aria-describedby="learningoutcomes-desc">
+                                <div class="card-content">
+                                    <span aria-hidden="true" class="icon">🎯</span>
+                                    <h3>Learning Outcomes Reflection</h3>
+                                    <p id="learningoutcomes-desc" class="course-text">You must reflect on how AI usage contributed to achieving the learning outcomes.</p>
+                                    <p class="assignment-text hidden">You must reflect on how AI usage contributed to achieving the learning outcomes for this assignment.</p>
+                                </div>
+                            </label>
+                            <label class="option-card checkbox-card">
                                 <input type="checkbox" name="documentation" value="other" aria-describedby="other-desc">
                                 <div class="card-content">
                                     <span aria-hidden="true" class="icon">➕</span>
@@ -328,6 +450,172 @@
                                     <textarea id="customDocumentation" name="customDocumentation" placeholder="Enter your additional documentation or assignment requirements" rows="3" aria-labelledby="custom-doc-label"></textarea>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Conditional Follow-up: Content Generation Details -->
+                    <div class="question-container hidden" id="contentGenerationFollowup" data-question="contentGenerationDetail" role="group" aria-labelledby="content-detail-heading">
+                        <h2 id="content-detail-heading" class="course-text">For content generation, is AI allowed for:</h2>
+                        <h2 class="assignment-text hidden">For content generation in this assignment, is AI allowed for:</h2>
+                        <div class="options-grid" role="radiogroup" aria-labelledby="content-detail-heading">
+                            <label class="option-card">
+                                <input type="radio" name="contentDetail" value="drafts" aria-describedby="drafts-desc">
+                                <div class="card-content">
+                                    <span aria-hidden="true" class="icon">📋</span>
+                                    <h3>Drafts Only</h3>
+                                    <p id="drafts-desc">AI-generated content must be substantially revised before submission.</p>
+                                </div>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="contentDetail" value="final" aria-describedby="final-desc">
+                                <div class="card-content">
+                                    <span aria-hidden="true" class="icon">✅</span>
+                                    <h3>Final Submissions</h3>
+                                    <p id="final-desc">AI-generated content may be included in final submissions with proper disclosure.</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Conditional Follow-up: Research Verification -->
+                    <div class="question-container hidden" id="researchFollowup" data-question="researchVerification" role="group" aria-labelledby="research-verify-heading">
+                        <h2 id="research-verify-heading">Must AI-generated research be verified?</h2>
+                        <div class="options-grid" role="radiogroup" aria-labelledby="research-verify-heading">
+                            <label class="option-card">
+                                <input type="radio" name="researchVerification" value="required" aria-describedby="verify-required-desc">
+                                <div class="card-content">
+                                    <span aria-hidden="true" class="icon">✅</span>
+                                    <h3>Verification Required</h3>
+                                    <p id="verify-required-desc">All AI-generated research must be verified against primary sources.</p>
+                                </div>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="researchVerification" value="optional" aria-describedby="verify-optional-desc">
+                                <div class="card-content">
+                                    <span aria-hidden="true" class="icon">⚠️</span>
+                                    <h3>Verification Recommended</h3>
+                                    <p id="verify-optional-desc">Verification is recommended but not required.</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Conditional: Prohibited AI - Exceptions -->
+                    <div class="question-container hidden" id="prohibitedExceptions" data-question="exceptions" role="group" aria-labelledby="exceptions-heading">
+                        <h2 id="exceptions-heading" class="course-text">Are there any exceptions to the AI prohibition in your course?</h2>
+                        <h2 class="assignment-text hidden">Are there any exceptions to the AI prohibition for this assignment?</h2>
+                        <div class="options-grid" role="radiogroup" aria-labelledby="exceptions-heading">
+                            <label class="option-card">
+                                <input type="radio" name="exceptions" value="none" aria-describedby="no-exceptions-desc">
+                                <div class="card-content">
+                                    <span aria-hidden="true" class="icon">🚫</span>
+                                    <h3>No Exceptions</h3>
+                                    <p id="no-exceptions-desc">AI tools are not permitted under any circumstances.</p>
+                                </div>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="exceptions" value="accessibility" aria-describedby="accessibility-exception-desc">
+                                <div class="card-content">
+                                    <span aria-hidden="true" class="icon">♿</span>
+                                    <h3>Accessibility Exceptions</h3>
+                                    <p id="accessibility-exception-desc">AI tools may be used for documented accessibility needs.</p>
+                                </div>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="exceptions" value="instructor" aria-describedby="instructor-exception-desc">
+                                <div class="card-content">
+                                    <span aria-hidden="true" class="icon">👨‍🏫</span>
+                                    <h3>Instructor Approval</h3>
+                                    <p id="instructor-exception-desc">Exceptions may be granted with prior instructor approval.</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question: Academic Integrity / Consequences -->
+                    <div class="question-container" id="question6" data-question="consequences" role="group" aria-labelledby="consequences-heading">
+                        <h2 id="consequences-heading">
+                            What are the consequences for violating this AI policy?
+                            <button type="button" class="info-icon" aria-label="More information about consequences" data-tooltip="Clearly state consequences for policy violations to set expectations. Consider graduated responses for first-time vs. repeated violations.">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                        </h2>
+                        <div class="options-grid" role="radiogroup" aria-labelledby="consequences-heading">
+                            <label class="option-card">
+                                <input type="radio" name="consequences" value="institutional" aria-describedby="institutional-desc">
+                                <div class="card-content">
+                                    <span aria-hidden="true" class="icon">⚖️</span>
+                                    <h3>Institutional Policy</h3>
+                                    <p id="institutional-desc">Violations will be handled according to the institution's academic integrity policy.</p>
+                                </div>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="consequences" value="graded" aria-describedby="graded-desc">
+                                <div class="card-content">
+                                    <span aria-hidden="true" class="icon">📉</span>
+                                    <h3>Grading Penalties</h3>
+                                    <p id="graded-desc">Violations may result in a reduced grade or zero on the assignment.</p>
+                                </div>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="consequences" value="educational" aria-describedby="educational-desc">
+                                <div class="card-content">
+                                    <span aria-hidden="true" class="icon">📚</span>
+                                    <h3>Educational Response</h3>
+                                    <p id="educational-desc">First violations will be treated as learning opportunities with educational interventions.</p>
+                                </div>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="consequences" value="custom" aria-describedby="custom-consequences-desc">
+                                <div class="card-content">
+                                    <span aria-hidden="true" class="icon">✏️</span>
+                                    <h3>Custom Consequences</h3>
+                                    <p id="custom-consequences-desc">Specify your own consequences (enter below).</p>
+                                </div>
+                            </label>
+                        </div>
+                        <div id="customConsequencesContainer" class="other-documentation-container hidden" role="group" aria-labelledby="custom-consequences-label">
+                            <div class="other-documentation-input">
+                                <label id="custom-consequences-label" for="customConsequences">Specify consequences:</label>
+                                <textarea id="customConsequences" name="customConsequences" placeholder="Describe the consequences for violating this policy" rows="3" aria-labelledby="custom-consequences-label"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question: Honor Code Link (Optional) -->
+                    <div class="question-container" id="question7" data-question="honorCode" role="group" aria-labelledby="honor-code-heading">
+                        <h2 id="honor-code-heading">Do you want to link to your institution's academic integrity policy?</h2>
+                        <div class="honor-code-input">
+                            <label for="honorCodeURL">Honor Code / Academic Integrity Policy URL (optional):</label>
+                            <input type="url" id="honorCodeURL" name="honorCodeURL" placeholder="https://example.edu/academic-integrity" aria-labelledby="honor-code-heading">
+                        </div>
+                    </div>
+
+                    <!-- Question: Student Acknowledgment -->
+                    <div class="question-container" id="question8" data-question="acknowledgment" role="group" aria-labelledby="acknowledgment-heading">
+                        <h2 id="acknowledgment-heading">
+                            Do you want to include a student acknowledgment statement?
+                            <button type="button" class="info-icon" aria-label="More information about acknowledgment" data-tooltip="An acknowledgment statement can be included in your policy for students to sign, confirming they understand and agree to follow the policy.">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                        </h2>
+                        <div class="options-grid" role="radiogroup" aria-labelledby="acknowledgment-heading">
+                            <label class="option-card">
+                                <input type="radio" name="acknowledgment" value="yes" aria-describedby="ack-yes-desc">
+                                <div class="card-content">
+                                    <span aria-hidden="true" class="icon">✅</span>
+                                    <h3>Yes</h3>
+                                    <p id="ack-yes-desc">Include an acknowledgment statement in the policy.</p>
+                                </div>
+                            </label>
+                            <label class="option-card">
+                                <input type="radio" name="acknowledgment" value="no" aria-describedby="ack-no-desc">
+                                <div class="card-content">
+                                    <span aria-hidden="true" class="icon">❌</span>
+                                    <h3>No</h3>
+                                    <p id="ack-no-desc">Do not include an acknowledgment statement.</p>
+                                </div>
+                            </label>
                         </div>
                     </div>
                 </form>

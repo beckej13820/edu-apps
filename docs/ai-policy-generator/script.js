@@ -23,28 +23,48 @@ document.addEventListener('DOMContentLoaded', function() {
     const downloadMarkdownBtn = document.getElementById('downloadMarkdown');
     const downloadTextBtn = document.getElementById('downloadText');
 
+    // Progress Indicator Elements
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+
+    // Template Buttons
+    const strictTemplate = document.getElementById('strictTemplate');
+    const moderateTemplate = document.getElementById('moderateTemplate');
+    const liberalTemplate = document.getElementById('liberalTemplate');
+    const customTemplate = document.getElementById('customTemplate');
+
     // Check if we're in an iframe
     const isInIframe = window.self !== window.top;
+
+    // LocalStorage key
+    const DRAFT_STORAGE_KEY = 'ai_policy_draft';
 
     // URL Parameter Handling
     function encodeFormState() {
         const formData = new FormData(form);
         const state = {
             // Radio buttons (single values)
-            s: formData.get('policyScope'), // s for scope
-            a: formData.get('aiUsage'),     // a for ai usage
-            c: formData.get('citation'),    // c for citation
-            
+            s: formData.get('policyScope'),          // s for scope
+            a: formData.get('aiUsage'),              // a for ai usage
+            c: formData.get('citation'),             // c for citation
+            cons: formData.get('consequences'),      // cons for consequences
+            ack: formData.get('acknowledgment'),     // ack for acknowledgment
+            cd: formData.get('contentDetail'),       // cd for content detail
+            rv: formData.get('researchVerification'),// rv for research verification
+            ex: formData.get('exceptions'),          // ex for exceptions
+
             // Checkboxes (arrays of values)
             u: Array.from(formData.getAll('useCases')),      // u for use cases
             d: Array.from(formData.getAll('documentation')), // d for documentation
-            
+
             // Custom text inputs
-            cu: document.getElementById('customUseCases')?.value || '',        // cu for custom use cases
-            cd: document.getElementById('customDocumentation')?.value || '',   // cd for custom documentation
-            cf: document.getElementById('customCitationFormat')?.value || ''   // cf for custom citation format
+            cu: document.getElementById('customUseCases')?.value || '',          // cu for custom use cases
+            cud: document.getElementById('customDocumentation')?.value || '',    // cud for custom documentation
+            cf: document.getElementById('customCitationFormat')?.value || '',    // cf for custom citation format
+            ccons: document.getElementById('customConsequences')?.value || '',   // ccons for custom consequences
+            hc: document.getElementById('honorCodeURL')?.value || ''             // hc for honor code
         };
-        
+
         // Convert to base64 to make it more compact
         return btoa(JSON.stringify(state));
     }
@@ -52,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function decodeFormState(encodedState) {
         try {
             const state = JSON.parse(atob(encodedState));
-            
+
             // Set radio buttons
             if (state.s) {
                 const radio = document.querySelector(`input[name="policyScope"][value="${state.s}"]`);
@@ -66,7 +86,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 const radio = document.querySelector(`input[name="citation"][value="${state.c}"]`);
                 if (radio) radio.checked = true;
             }
-            
+            if (state.cons) {
+                const radio = document.querySelector(`input[name="consequences"][value="${state.cons}"]`);
+                if (radio) radio.checked = true;
+            }
+            if (state.ack) {
+                const radio = document.querySelector(`input[name="acknowledgment"][value="${state.ack}"]`);
+                if (radio) radio.checked = true;
+            }
+            if (state.cd) {
+                const radio = document.querySelector(`input[name="contentDetail"][value="${state.cd}"]`);
+                if (radio) radio.checked = true;
+            }
+            if (state.rv) {
+                const radio = document.querySelector(`input[name="researchVerification"][value="${state.rv}"]`);
+                if (radio) radio.checked = true;
+            }
+            if (state.ex) {
+                const radio = document.querySelector(`input[name="exceptions"][value="${state.ex}"]`);
+                if (radio) radio.checked = true;
+            }
+
             // Set checkboxes
             if (state.u) {
                 state.u.forEach(value => {
@@ -80,23 +120,30 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (checkbox) checkbox.checked = true;
                 });
             }
-            
+
             // Set custom text inputs
             const customUseCases = document.getElementById('customUseCases');
             const customDocumentation = document.getElementById('customDocumentation');
             const customCitationFormat = document.getElementById('customCitationFormat');
-            
+            const customConsequences = document.getElementById('customConsequences');
+            const honorCodeURL = document.getElementById('honorCodeURL');
+
             if (state.cu && customUseCases) customUseCases.value = state.cu;
-            if (state.cd && customDocumentation) customDocumentation.value = state.cd;
+            if (state.cud && customDocumentation) customDocumentation.value = state.cud;
             if (state.cf && customCitationFormat) customCitationFormat.value = state.cf;
-            
+            if (state.ccons && customConsequences) customConsequences.value = state.ccons;
+            if (state.hc && honorCodeURL) honorCodeURL.value = state.hc;
+
             // Update the form display
             updatePolicyScope();
             toggleCitationFormat();
             toggleOtherCitationFormat();
             toggleOtherDocumentation();
             toggleOtherUseCases();
+            handleConditionalQuestions();
+            handleConditionalFollowups();
             updatePolicyPreview();
+            calculateProgress();
         } catch (e) {
             // Silently ignore invalid parameters
             console.debug('Invalid URL parameters:', e);
@@ -133,6 +180,225 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize from URL parameters
     initializeFromURL();
+
+    // Load draft from localStorage if available
+    loadDraft();
+
+    // Progress Calculation
+    function calculateProgress() {
+        const totalQuestions = 8; // Total number of main questions
+        let answered = 0;
+
+        // Check each required question
+        if (document.querySelector('input[name="policyScope"]:checked')) answered++;
+        if (document.querySelector('input[name="aiUsage"]:checked')) answered++;
+
+        const aiUsage = document.querySelector('input[name="aiUsage"]:checked');
+        if (aiUsage && aiUsage.value !== 'prohibited') {
+            // Use cases only count if AI is not prohibited
+            if (aiUsage.value === 'limited' && document.querySelectorAll('input[name="useCases"]:checked').length > 0) {
+                answered++;
+            } else if (aiUsage.value === 'encouraged') {
+                answered++; // Auto-counted when all uses are approved
+            }
+        } else if (aiUsage && aiUsage.value === 'prohibited') {
+            answered++; // Skip use cases for prohibited
+        }
+
+        if (document.querySelector('input[name="citation"]:checked')) answered++;
+        if (document.querySelectorAll('input[name="documentation"]:checked').length > 0) answered++;
+        if (document.querySelector('input[name="consequences"]:checked')) answered++;
+        if (document.querySelector('input[name="acknowledgment"]:checked')) answered++;
+
+        // Honor code URL is optional, so we don't count it for progress
+
+        const percentage = Math.round((answered / totalQuestions) * 100);
+        progressFill.style.width = percentage + '%';
+        progressText.textContent = percentage + '% Complete';
+
+        return percentage;
+    }
+
+    // Template Functions
+    function applyTemplate(templateType) {
+        // Clear form first
+        form.reset();
+
+        switch(templateType) {
+            case 'strict':
+                // Strict: AI prohibited
+                document.querySelector('input[name="policyScope"][value="course"]').checked = true;
+                document.querySelector('input[name="aiUsage"][value="prohibited"]').checked = true;
+                document.querySelector('input[name="exceptions"][value="accessibility"]').checked = true;
+                document.querySelector('input[name="consequences"][value="institutional"]').checked = true;
+                document.querySelector('input[name="acknowledgment"][value="yes"]').checked = true;
+                break;
+
+            case 'moderate':
+                // Moderate: Limited use with documentation
+                document.querySelector('input[name="policyScope"][value="course"]').checked = true;
+                document.querySelector('input[name="aiUsage"][value="limited"]').checked = true;
+                document.querySelector('input[name="useCases"][value="brainstorming"]').checked = true;
+                document.querySelector('input[name="useCases"][value="research"]').checked = true;
+                document.querySelector('input[name="useCases"][value="grammar"]').checked = true;
+                document.querySelector('input[name="citation"][value="required"]').checked = true;
+                document.querySelector('input[name="documentation"][value="tools"]').checked = true;
+                document.querySelector('input[name="documentation"][value="reflection"]').checked = true;
+                document.querySelector('input[name="consequences"][value="graded"]').checked = true;
+                document.querySelector('input[name="acknowledgment"][value="yes"]').checked = true;
+                break;
+
+            case 'liberal':
+                // Liberal: AI encouraged with reflection
+                document.querySelector('input[name="policyScope"][value="course"]').checked = true;
+                document.querySelector('input[name="aiUsage"][value="encouraged"]').checked = true;
+                document.querySelector('input[name="citation"][value="required"]').checked = true;
+                document.querySelector('input[name="documentation"][value="reflection"]').checked = true;
+                document.querySelector('input[name="documentation"][value="learningoutcomes"]').checked = true;
+                document.querySelector('input[name="consequences"][value="educational"]').checked = true;
+                document.querySelector('input[name="acknowledgment"][value="yes"]').checked = true;
+                break;
+
+            case 'custom':
+                // Just reset the form
+                break;
+        }
+
+        // Trigger all updates
+        updatePolicyScope();
+        handleConditionalQuestions();
+        handleConditionalFollowups();
+        updatePolicyPreview();
+        calculateProgress();
+        saveDraft();
+    }
+
+    // Template button event listeners
+    strictTemplate.addEventListener('click', () => applyTemplate('strict'));
+    moderateTemplate.addEventListener('click', () => applyTemplate('moderate'));
+    liberalTemplate.addEventListener('click', () => applyTemplate('liberal'));
+    customTemplate.addEventListener('click', () => applyTemplate('custom'));
+
+    // LocalStorage Functions
+    function saveDraft() {
+        try {
+            const formData = new FormData(form);
+            const draft = {};
+
+            // Save all form values
+            for (let [name, value] of formData.entries()) {
+                if (!draft[name]) {
+                    draft[name] = [];
+                }
+                draft[name].push(value);
+            }
+
+            // Save text inputs separately
+            draft.customUseCases = document.getElementById('customUseCases')?.value || '';
+            draft.customDocumentation = document.getElementById('customDocumentation')?.value || '';
+            draft.customConsequences = document.getElementById('customConsequences')?.value || '';
+            draft.honorCodeURL = document.getElementById('honorCodeURL')?.value || '';
+
+            localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draft));
+        } catch (e) {
+            console.error('Failed to save draft:', e);
+        }
+    }
+
+    function loadDraft() {
+        try {
+            const draftStr = localStorage.getItem(DRAFT_STORAGE_KEY);
+            if (!draftStr) return;
+
+            const draft = JSON.parse(draftStr);
+
+            // Don't load draft if URL parameters are present (shared link takes precedence)
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('policy')) return;
+
+            // Load radio buttons and checkboxes
+            Object.keys(draft).forEach(name => {
+                if (Array.isArray(draft[name])) {
+                    draft[name].forEach(value => {
+                        const input = document.querySelector(`input[name="${name}"][value="${value}"]`);
+                        if (input) {
+                            input.checked = true;
+                        }
+                    });
+                }
+            });
+
+            // Load text inputs
+            if (draft.customUseCases) document.getElementById('customUseCases').value = draft.customUseCases;
+            if (draft.customDocumentation) document.getElementById('customDocumentation').value = draft.customDocumentation;
+            if (draft.customConsequences) document.getElementById('customConsequences').value = draft.customConsequences;
+            if (draft.honorCodeURL) document.getElementById('honorCodeURL').value = draft.honorCodeURL;
+
+            // Update UI
+            updatePolicyScope();
+            handleConditionalQuestions();
+            handleConditionalFollowups();
+            updatePolicyPreview();
+            calculateProgress();
+        } catch (e) {
+            console.error('Failed to load draft:', e);
+        }
+    }
+
+    function clearDraft() {
+        try {
+            localStorage.removeItem(DRAFT_STORAGE_KEY);
+        } catch (e) {
+            console.error('Failed to clear draft:', e);
+        }
+    }
+
+    // Conditional Follow-up Questions Handler
+    function handleConditionalFollowups() {
+        // Content Generation Follow-up
+        const contentChecked = document.querySelector('input[name="useCases"][value="content"]:checked');
+        const contentFollowup = document.getElementById('contentGenerationFollowup');
+        if (contentChecked) {
+            contentFollowup.classList.remove('hidden');
+        } else {
+            contentFollowup.classList.add('hidden');
+            // Clear selections
+            document.querySelectorAll('input[name="contentDetail"]').forEach(input => input.checked = false);
+        }
+
+        // Research Follow-up
+        const researchChecked = document.querySelector('input[name="useCases"][value="research"]:checked');
+        const researchFollowup = document.getElementById('researchFollowup');
+        if (researchChecked) {
+            researchFollowup.classList.remove('hidden');
+        } else {
+            researchFollowup.classList.add('hidden');
+            // Clear selections
+            document.querySelectorAll('input[name="researchVerification"]').forEach(input => input.checked = false);
+        }
+
+        // Prohibited Exceptions
+        const prohibited = document.querySelector('input[name="aiUsage"][value="prohibited"]:checked');
+        const exceptionsFollowup = document.getElementById('prohibitedExceptions');
+        if (prohibited) {
+            exceptionsFollowup.classList.remove('hidden');
+        } else {
+            exceptionsFollowup.classList.add('hidden');
+            // Clear selections
+            document.querySelectorAll('input[name="exceptions"]').forEach(input => input.checked = false);
+        }
+
+        // Custom Consequences
+        const customConsequences = document.querySelector('input[name="consequences"][value="custom"]:checked');
+        const customConsequencesContainer = document.getElementById('customConsequencesContainer');
+        if (customConsequences) {
+            customConsequencesContainer.classList.remove('hidden');
+        } else {
+            customConsequencesContainer.classList.add('hidden');
+        }
+
+        updateIframeHeight();
+    }
 
     // Function to send height updates to parent window
     function updateIframeHeight() {
@@ -432,14 +698,95 @@ document.addEventListener('DOMContentLoaded', function() {
             if (name === 'citation_format' && value === 'other') {
                 value = formData.get('customCitationFormat');
             }
-            
+
             const questionContainer = document.querySelector(`[data-question="${name}"]`);
             if (questionContainer && !questionContainer.classList.contains('hidden')) {
                 // Skip the policyScope section but keep its contextual effects
                 if (name === 'policyScope') {
                     continue;
                 }
-                
+
+                // Handle conditional follow-up questions
+                if (name === 'contentDetail') {
+                    const selectedOption = questionContainer.querySelector(`input[name="${name}"]:checked`);
+                    if (selectedOption) {
+                        const cardContent = selectedOption.closest('.option-card').querySelector('.card-content');
+                        const iconSpan = cardContent.querySelector('.icon');
+                        const answer = cardContent.querySelector('p').textContent;
+                        policySections.push({
+                            text: answer,
+                            iconHTML: iconSpan ? iconSpan.outerHTML : ''
+                        });
+                    }
+                    continue;
+                }
+
+                if (name === 'researchVerification') {
+                    const selectedOption = questionContainer.querySelector(`input[name="${name}"]:checked`);
+                    if (selectedOption) {
+                        const cardContent = selectedOption.closest('.option-card').querySelector('.card-content');
+                        const iconSpan = cardContent.querySelector('.icon');
+                        const answer = cardContent.querySelector('p').textContent;
+                        policySections.push({
+                            text: answer,
+                            iconHTML: iconSpan ? iconSpan.outerHTML : ''
+                        });
+                    }
+                    continue;
+                }
+
+                if (name === 'exceptions') {
+                    const selectedOption = questionContainer.querySelector(`input[name="${name}"]:checked`);
+                    if (selectedOption) {
+                        const cardContent = selectedOption.closest('.option-card').querySelector('.card-content');
+                        const iconSpan = cardContent.querySelector('.icon');
+                        const answer = cardContent.querySelector('p').textContent;
+                        policySections.push({
+                            text: answer,
+                            iconHTML: iconSpan ? iconSpan.outerHTML : ''
+                        });
+                    }
+                    continue;
+                }
+
+                // Handle consequences
+                if (name === 'consequences') {
+                    const selectedOption = questionContainer.querySelector(`input[name="${name}"]:checked`);
+                    if (selectedOption) {
+                        const cardContent = selectedOption.closest('.option-card').querySelector('.card-content');
+                        const iconSpan = cardContent.querySelector('.icon');
+                        let answer = cardContent.querySelector('p').textContent;
+
+                        // If custom consequences, use the custom text
+                        if (selectedOption.value === 'custom') {
+                            const customText = document.getElementById('customConsequences')?.value?.trim();
+                            if (customText) {
+                                answer = customText;
+                            }
+                        }
+
+                        policySections.push({
+                            text: answer,
+                            iconHTML: iconSpan ? iconSpan.outerHTML : '',
+                            isConsequences: true
+                        });
+                    }
+                    continue;
+                }
+
+                // Handle acknowledgment
+                if (name === 'acknowledgment') {
+                    const selectedOption = questionContainer.querySelector(`input[name="${name}"]:checked`);
+                    if (selectedOption && selectedOption.value === 'yes') {
+                        policySections.push({
+                            text: 'I acknowledge that I have read and understand this AI policy. I agree to follow these guidelines and understand the consequences of violating this policy.',
+                            iconHTML: '<span class="icon" aria-hidden="true">✍️</span>',
+                            isAcknowledgment: true
+                        });
+                    }
+                    continue;
+                }
+
                 if (name === 'documentation' && !documentationProcessed) {
                     const selectedOptions = Array.from(document.querySelectorAll('input[name="documentation"]:checked'));
                     if (selectedOptions.length > 0) {
@@ -500,6 +847,21 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
+        // Add honor code link if provided
+        const honorCodeURL = document.getElementById('honorCodeURL')?.value?.trim();
+        if (honorCodeURL) {
+            try {
+                new URL(honorCodeURL); // Validate URL
+                policySections.push({
+                    text: `For more information about academic integrity, please review our <a href="${honorCodeURL}" target="_blank" rel="noopener noreferrer">Academic Integrity Policy</a>.`,
+                    iconHTML: '<span class="icon" aria-hidden="true">🔗</span>',
+                    isHonorCode: true
+                });
+            } catch (e) {
+                // Invalid URL, skip
+            }
+        }
+
         // Generate policy statement
         let policyHTML = '';
         policySections.forEach(section => {
@@ -519,7 +881,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             break;
                     }
                 }
-                
+
                 policyHTML += `
                     <div class="policy-header ${policyClass}">
                         <div class="policy-icons">
@@ -539,6 +901,33 @@ document.addEventListener('DOMContentLoaded', function() {
                                 ${requirements.filter(r => r.trim()).map(r => `<li>${r}</li>`).join('')}
                             </ul>
                         </div>
+                    </div>
+                `;
+            } else if (section.isConsequences) {
+                policyHTML += `
+                    <div class="policy-section">
+                        ${section.iconHTML}
+                        <div>
+                            <p class="documentation-header">Consequences for Policy Violations:</p>
+                            <p>${section.text}</p>
+                        </div>
+                    </div>
+                `;
+            } else if (section.isAcknowledgment) {
+                policyHTML += `
+                    <div class="policy-section">
+                        ${section.iconHTML}
+                        <div>
+                            <p class="documentation-header">Student Acknowledgment:</p>
+                            <p>${section.text}</p>
+                        </div>
+                    </div>
+                `;
+            } else if (section.isHonorCode) {
+                policyHTML += `
+                    <div class="policy-section">
+                        ${section.iconHTML}
+                        <p>${section.text}</p>
                     </div>
                 `;
             } else {
@@ -562,6 +951,7 @@ document.addEventListener('DOMContentLoaded', function() {
             updatePolicyScope();
         } else if (e.target.name === 'aiUsage') {
             handleConditionalQuestions();
+            handleConditionalFollowups();
         } else if (e.target.name === 'citation') {
             toggleCitationFormat();
             // Force immediate preview update when citation changes
@@ -572,17 +962,25 @@ document.addEventListener('DOMContentLoaded', function() {
             toggleOtherDocumentation();
         } else if (e.target.name === 'useCases') {
             toggleOtherUseCases();
+            handleConditionalFollowups();
+        } else if (e.target.name === 'consequences') {
+            handleConditionalFollowups();
         }
         updatePolicyPreview();
         updateURL(); // Update URL when form changes
+        calculateProgress(); // Update progress
+        saveDraft(); // Save to localStorage
     });
 
     // Update URL when custom text inputs change
-    ['customUseCases', 'customDocumentation', 'customCitationFormat'].forEach(id => {
+    ['customUseCases', 'customDocumentation', 'customCitationFormat', 'customConsequences', 'honorCodeURL'].forEach(id => {
         const element = document.getElementById(id);
         if (element) {
             element.addEventListener('input', function() {
                 updateURL();
+                updatePolicyPreview();
+                calculateProgress();
+                saveDraft();
             });
         }
     });
@@ -615,29 +1013,45 @@ document.addEventListener('DOMContentLoaded', function() {
     startOverBtn.addEventListener('click', function() {
         // Clear the policy preview first
         previewContainer.innerHTML = '<p>Select options to generate your policy statement.</p>';
-        
+
         // Reset the form and all inputs
         form.reset();
         citationFormatContainer.classList.add('hidden');
         otherCitationFormat.classList.add('hidden');
         otherDocumentationContainer.classList.add('hidden');
         document.getElementById('otherUseCasesContainer').classList.add('hidden');
-        
+        document.getElementById('customConsequencesContainer')?.classList.add('hidden');
+
         // Reset all questions to their initial state
         document.getElementById('question3').classList.remove('hidden');
         document.getElementById('question4').classList.remove('hidden');
         document.getElementById('question5').classList.remove('hidden');
-        
+
+        // Hide conditional followups
+        document.getElementById('contentGenerationFollowup')?.classList.add('hidden');
+        document.getElementById('researchFollowup')?.classList.add('hidden');
+        document.getElementById('prohibitedExceptions')?.classList.add('hidden');
+
         // Reset custom inputs
         document.getElementById('customCitationFormat').value = '';
         document.getElementById('customDocumentation').value = '';
         document.getElementById('customUseCases').value = '';
-        
+        document.getElementById('customConsequences').value = '';
+        document.getElementById('honorCodeURL').value = '';
+
         // Update all conditional displays
         updatePolicyScope();
         toggleCitationFormat();
         handleConditionalQuestions();
-        
+        handleConditionalFollowups();
+
+        // Reset progress
+        progressFill.style.width = '0%';
+        progressText.textContent = '0% Complete';
+
+        // Clear localStorage draft
+        clearDraft();
+
         // Force the preview to stay cleared
         setTimeout(() => {
             previewContainer.innerHTML = '<p>Select options to generate your policy statement.</p>';

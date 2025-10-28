@@ -783,3 +783,291 @@ h2 {
         font-size: 0.85rem;
     }
 }
+
+/* Progress Indicator Styles */
+.progress-container {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 24px;
+    background-color: #e9ecef;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #0066cc, #0052a3);
+    border-radius: 12px;
+    transition: width 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 0.5rem;
+}
+
+.progress-text {
+    text-align: center;
+    margin-top: 0.5rem;
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+/* Quick Start Templates Styles */
+.templates-container {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.templates-container h2 {
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+}
+
+.template-description {
+    margin-bottom: 1rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.template-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.template-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    background-color: white;
+    border: 2px solid #dee2e6;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.template-btn:hover {
+    border-color: var(--primary-color);
+    background-color: #e6f0ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.template-btn:focus {
+    outline: 3px solid #ffd700;
+    outline-offset: 2px;
+}
+
+.template-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.template-name {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    color: var(--text-color);
+}
+
+.template-desc {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* Tooltip Styles */
+.info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #e6f0ff;
+    color: var(--primary-color);
+    border: none;
+    cursor: help;
+    margin-left: 0.5rem;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.info-icon:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.info-icon::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    background-color: #333;
+    color: white;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--border-radius);
+    font-size: 0.85rem;
+    white-space: normal;
+    width: 250px;
+    text-align: left;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 1000;
+    line-height: 1.4;
+}
+
+.info-icon:hover::after,
+.info-icon:focus::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-4px);
+}
+
+.info-icon i {
+    font-size: 0.9rem;
+}
+
+/* Honor Code Input Styles */
+.honor-code-input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.honor-code-input label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+.honor-code-input input[type="url"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #dee2e6;
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.honor-code-input input[type="url"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+/* Conditional Questions Styling */
+.question-container.hidden {
+    display: none;
+}
+
+/* Warning/Info Messages */
+.policy-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+    border-radius: var(--border-radius);
+    margin: 1rem 0;
+}
+
+.policy-warning .icon {
+    font-size: 1.5rem;
+    color: #856404;
+}
+
+.policy-warning p {
+    margin: 0;
+    color: #856404;
+    font-size: 0.9rem;
+}
+
+/* Save Draft Indicator */
+.save-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #d4edda;
+    color: #155724;
+    border-radius: var(--border-radius);
+    font-size: 0.85rem;
+    margin-left: auto;
+}
+
+.save-indicator.saving {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.save-indicator .icon {
+    font-size: 1rem;
+}
+
+/* Enhanced question container spacing */
+.question-container {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments for new elements */
+@media (max-width: 768px) {
+    .template-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .template-btn {
+        padding: 0.75rem;
+    }
+
+    .template-icon {
+        font-size: 1.5rem;
+    }
+
+    .template-name {
+        font-size: 0.9rem;
+    }
+
+    .template-desc {
+        font-size: 0.75rem;
+    }
+
+    .info-icon::after {
+        width: 200px;
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .template-buttons {
+        grid-template-columns: 1fr;
+    }
+}
