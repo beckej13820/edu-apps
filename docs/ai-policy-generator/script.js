@@ -27,6 +27,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const isInIframe = window.self !== window.top;
 
     // URL Parameter Handling
+    function toBase64Url(text) {
+        const bytes = new TextEncoder().encode(text);
+        const binary = Array.from(bytes, byte => String.fromCharCode(byte)).join('');
+        return btoa(binary)
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_')
+            .replace(/=+$/g, '');
+    }
+
+    function fromBase64Url(base64url) {
+        const normalizedBase64 = base64url
+            .replace(/-/g, '+')
+            .replace(/_/g, '/');
+        const paddedBase64 = normalizedBase64 + '='.repeat((4 - (normalizedBase64.length % 4)) % 4);
+        const binary = atob(paddedBase64);
+        const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
+        return new TextDecoder().decode(bytes);
+    }
+
     function encodeFormState() {
         const formData = new FormData(form);
         const state = {
@@ -45,13 +64,13 @@ document.addEventListener('DOMContentLoaded', function() {
             cf: document.getElementById('customCitationFormat')?.value || ''   // cf for custom citation format
         };
         
-        // Convert to base64 to make it more compact
-        return btoa(JSON.stringify(state));
+        // Convert to URL-safe base64 so shared links work with all Unicode characters
+        return toBase64Url(JSON.stringify(state));
     }
 
     function decodeFormState(encodedState) {
         try {
-            const state = JSON.parse(atob(encodedState));
+            const state = JSON.parse(fromBase64Url(encodedState));
             
             // Set radio buttons
             if (state.s) {
